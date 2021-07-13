@@ -6,8 +6,8 @@ Pod::Spec.new do |s|
 	s.platform = :ios, '7.0'
 
 	s.author = 'Jesse Squires'
-
-	s.source = { :git => 'https://github.com/jessesquires/JSQMessagesViewController.git', :tag => s.version }
+	s.homepage         = 'https://github.com/guofengtd/JSQMessagesViewController'
+	s.source = { :git => 'https://github.com/guofengtd/JSQMessagesViewController.git', :tag => s.version }
 	s.source_files = 'JSQMessagesViewController/**/*.{h,m}'
 
 	s.resources = ['JSQMessagesViewController/Assets/JSQMessagesAssets.bundle', 'JSQMessagesViewController/**/*.{xib}']
