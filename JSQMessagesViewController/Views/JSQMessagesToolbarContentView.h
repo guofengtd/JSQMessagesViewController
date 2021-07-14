@@ -77,6 +77,8 @@ FOUNDATION_EXPORT const CGFloat kJSQMessagesToolbarContentViewHorizontalSpacingD
  */
 @property (weak, nonatomic, readonly, nullable) UIView *leftBarButtonContainerView;
 
+@property (assign, nonatomic) CGFloat leftBarButtonContainerBottomPadding;
+
 /**
  *  A custom button item displayed on the right of the toolbar content view.
  *

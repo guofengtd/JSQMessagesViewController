@@ -934,6 +934,14 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
 
     CGRect keyboardEndFrame = [userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
 
+    CGRect rect = CGRectIntersection([UIScreen mainScreen].bounds, keyboardEndFrame);
+    if (CGRectGetHeight(rect) > 100 || self.view.safeAreaInsets.bottom == 0) {
+        self.inputToolbar.contentView.leftBarButtonContainerBottomPadding = 8;
+    }
+    else {
+        self.inputToolbar.contentView.leftBarButtonContainerBottomPadding = 32;
+    }
+    
     if (CGRectIsNull(keyboardEndFrame)) {
         return;
     }

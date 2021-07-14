@@ -35,6 +35,7 @@ const CGFloat kJSQMessagesToolbarContentViewHorizontalSpacingDefault = 8.0f;
 
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *leftHorizontalSpacingConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *rightHorizontalSpacingConstraint;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *leftBarButtonContainerViewBottomConstraint;
 
 @end
 
@@ -60,6 +61,7 @@ const CGFloat kJSQMessagesToolbarContentViewHorizontalSpacingDefault = 8.0f;
 
     self.leftHorizontalSpacingConstraint.constant = kJSQMessagesToolbarContentViewHorizontalSpacingDefault;
     self.rightHorizontalSpacingConstraint.constant = kJSQMessagesToolbarContentViewHorizontalSpacingDefault;
+    self.leftBarButtonContainerViewBottomConstraint.constant = 8;
 
     self.backgroundColor = [UIColor clearColor];
 }
@@ -156,6 +158,11 @@ const CGFloat kJSQMessagesToolbarContentViewHorizontalSpacingDefault = 8.0f;
 - (void)setLeftContentPadding:(CGFloat)leftContentPadding
 {
     self.leftHorizontalSpacingConstraint.constant = leftContentPadding;
+    [self setNeedsUpdateConstraints];
+}
+
+- (void)setLeftBarButtonContainerBottomPadding:(CGFloat)leftBarButtonContainerBottomPadding {
+    self.leftBarButtonContainerViewBottomConstraint.constant = leftBarButtonContainerBottomPadding;
     [self setNeedsUpdateConstraints];
 }
 
