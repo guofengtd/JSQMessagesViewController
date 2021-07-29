@@ -61,6 +61,12 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (UIButton *)defaultSendButtonItem;
 
+- (UIButton *)inputModeButtonItem:(BOOL)textMode;
+
+- (UIButton *)defaultEmojiButtonItem;
+
+- (UIButton *)defaultExtraButtonItem;
+
 @end
 
 NS_ASSUME_NONNULL_END

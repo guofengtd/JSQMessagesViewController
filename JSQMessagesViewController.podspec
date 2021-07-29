@@ -15,5 +15,7 @@ Pod::Spec.new do |s|
 	s.frameworks = 'QuartzCore', 'CoreGraphics', 'CoreLocation', 'MapKit', 'MobileCoreServices', 'AVFoundation'
 	s.requires_arc = true
 
-	s.deprecated = true
+  s.dependency 'Masonry'
+  s.dependency 'GolfTools'
+  
 end

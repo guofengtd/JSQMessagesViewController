@@ -109,4 +109,26 @@
 {
     return [UIImage jsq_bubbleImageFromBundleWithName:@"share"];
 }
+
++ (UIImage *)jsq_textModeImage
+{
+    return [UIImage jsq_bubbleImageFromBundleWithName:@"keyboard"];
+}
+
++ (UIImage *)jsq_audioModeImage
+{
+    return [UIImage jsq_bubbleImageFromBundleWithName:@"voice"];
+}
+
++ (UIImage *)jsq_emojiImage
+{
+    return [UIImage jsq_bubbleImageFromBundleWithName:@"emoji"];
+}
+
++ (UIImage *)jsq_extraImage
+{
+    return [UIImage jsq_bubbleImageFromBundleWithName:@"extra"];
+}
+
+
 @end

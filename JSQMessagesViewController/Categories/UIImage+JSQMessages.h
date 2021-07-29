@@ -90,6 +90,14 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (UIImage *)jsq_shareActionImage;
 
++ (UIImage *)jsq_textModeImage;
+
++ (UIImage *)jsq_audioModeImage;
+
++ (UIImage *)jsq_emojiImage;
+
++ (UIImage *)jsq_extraImage;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -108,7 +108,7 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
 }
 
 
-@interface JSQMessagesViewController () <JSQMessagesInputToolbarDelegate>
+@interface JSQMessagesViewController () 
 
 @property (weak, nonatomic) IBOutlet JSQMessagesCollectionView *collectionView;
 @property (strong, nonatomic) IBOutlet JSQMessagesInputToolbar *inputToolbar;
@@ -161,6 +161,8 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
     self.inputToolbar.contentView.textView.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
     [self.inputToolbar removeFromSuperview];
 
+    self.inputToolbar.contentView.pttView.delegate = self;
+    
     self.automaticallyScrollsToMostRecentMessage = YES;
 
     self.outgoingCellIdentifier = [JSQMessagesCollectionViewCellOutgoing cellReuseIdentifier];
@@ -748,8 +750,20 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
     }
 }
 
-- (void)messagesInputToolbar:(JSQMessagesInputToolbar *)toolbar didPressRightBarButton:(UIButton *)sender
-{
+- (void)messagesInputToolbar:(JSQMessagesInputToolbar *)toolbar didPressEmojiBarButton:(nonnull UIButton *)sender {
+    if (toolbar.sendButtonLocation == JSQMessagesInputSendButtonLocationRight) {
+        [self didPressSendButton:sender
+                 withMessageText:[self jsq_currentlyComposedMessageText]
+                        senderId:[self.collectionView.dataSource senderId]
+               senderDisplayName:[self.collectionView.dataSource senderDisplayName]
+                            date:[NSDate date]];
+    }
+    else {
+        [self didPressAccessoryButton:sender];
+    }
+}
+
+- (void)messagesInputToolbar:(JSQMessagesInputToolbar *)toolbar didPressExtraBarButton:(nonnull UIButton *)sender {
     if (toolbar.sendButtonLocation == JSQMessagesInputSendButtonLocationRight) {
         [self didPressSendButton:sender
                  withMessageText:[self jsq_currentlyComposedMessageText]
@@ -796,6 +810,19 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
     if (self.automaticallyScrollsToMostRecentMessage) {
         [self scrollToBottomAnimated:YES];
     }
+}
+
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
+    if ([text isEqualToString:@"\n"]) {
+        [self didPressSendButton:nil
+                 withMessageText:textView.text
+                        senderId:self.senderId
+               senderDisplayName:self.senderDisplayName
+                            date:[NSDate date]];
+        return FALSE;
+    }
+    
+    return TRUE;
 }
 
 - (void)textViewDidChange:(UITextView *)textView

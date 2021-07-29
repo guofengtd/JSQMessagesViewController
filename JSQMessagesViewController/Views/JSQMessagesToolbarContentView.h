@@ -18,16 +18,36 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import <Masonry/Masonry.h>
+#import <GolfTools/GolfTools.h>
 
 #import "JSQMessagesComposerTextView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-/**
- *  A constant value representing the default spacing to use for the left and right edges 
- *  of the toolbar content view.
- */
-FOUNDATION_EXPORT const CGFloat kJSQMessagesToolbarContentViewHorizontalSpacingDefault;
+typedef NS_ENUM(NSUInteger, JSQMessagesToolbarPTTViewState) {
+    PTTViewStateNormal,
+    PTTViewStatePushDown,
+    PTTViewStateMoveOut
+};
+
+@class JSQMessagesToolbarPTTView;
+
+@protocol JSQMessagesToolbarPTTViewDelegate <NSObject>
+
+- (void)pttViewPushDown:(JSQMessagesToolbarPTTView *)pttView;
+
+- (void)pttView:(JSQMessagesToolbarPTTView *)pttView moveInArea:(BOOL)inArea;
+
+- (void)pttView:(JSQMessagesToolbarPTTView *)pttView releasedInArea:(BOOL)inArea;
+
+@end
+
+@interface JSQMessagesToolbarPTTView : UIView
+
+@property (nonatomic, weak) id < JSQMessagesToolbarPTTViewDelegate >    delegate;
+
+@end
 
 /**
  *  A `JSQMessagesToolbarContentView` represents the content displayed in a `JSQMessagesInputToolbar`.
@@ -36,10 +56,13 @@ FOUNDATION_EXPORT const CGFloat kJSQMessagesToolbarContentViewHorizontalSpacingD
  */
 @interface JSQMessagesToolbarContentView : UIView
 
+@property (nonatomic, assign) BOOL  textMode;
+
 /**
  *  Returns the text view in which the user composes a message.
  */
-@property (weak, nonatomic, readonly, nullable) JSQMessagesComposerTextView *textView;
+@property (nonatomic, readonly, nullable) JSQMessagesComposerTextView   *textView;
+@property (nonatomic, readonly, nullable) JSQMessagesToolbarPTTView     *pttView;
 
 /**
  *  A custom button item displayed on the left of the toolbar content view.
@@ -51,21 +74,21 @@ FOUNDATION_EXPORT const CGFloat kJSQMessagesToolbarContentViewHorizontalSpacingD
  *  If the frame of this button is equal to `CGRectZero` when set, then a default frame size will be used.
  *  Set this value to `nil` to remove the button.
  */
-@property (weak, nonatomic, nullable) UIButton *leftBarButtonItem;
+@property (nonatomic, nullable) UIButton *leftBarButtonItem;
 
 /**
  *  Specifies the width of the leftBarButtonItem.
  *
  *  @discussion This property modifies the width of the leftBarButtonContainerView.
  */
-@property (assign, nonatomic) CGFloat leftBarButtonItemWidth;
+//@property (assign, nonatomic) CGFloat leftBarButtonItemWidth;
 
 /**
  *  Specifies the amount of spacing between the content view and the leading edge of leftBarButtonItem.
  *
  *  @discussion The default value is `8.0f`.
  */
-@property (assign, nonatomic) CGFloat leftContentPadding;
+//@property (assign, nonatomic) CGFloat leftContentPadding;
 
 /**
  *  The container view for the leftBarButtonItem.
@@ -75,7 +98,7 @@ FOUNDATION_EXPORT const CGFloat kJSQMessagesToolbarContentViewHorizontalSpacingD
  *  However, you will be completely responsible for responding to all touch events for these buttons
  *  in your `JSQMessagesViewController` subclass.
  */
-@property (weak, nonatomic, readonly, nullable) UIView *leftBarButtonContainerView;
+@property (nonatomic, readonly, nullable) UIView *leftBarButtonContainerView;
 
 @property (assign, nonatomic) CGFloat leftBarButtonContainerBottomPadding;
 
@@ -89,21 +112,22 @@ FOUNDATION_EXPORT const CGFloat kJSQMessagesToolbarContentViewHorizontalSpacingD
  *  If the frame of this button is equal to `CGRectZero` when set, then a default frame size will be used.
  *  Set this value to `nil` to remove the button.
  */
-@property (weak, nonatomic, nullable) UIButton *rightBarButtonItem;
+@property (nonatomic, nullable) UIButton *emojiBarButtonItem;
+@property (nonatomic, nullable) UIButton *extraBarButtonItem;
 
 /**
  *  Specifies the width of the rightBarButtonItem.
  *
  *  @discussion This property modifies the width of the rightBarButtonContainerView.
  */
-@property (assign, nonatomic) CGFloat rightBarButtonItemWidth;
+//@property (assign, nonatomic) CGFloat rightBarButtonItemWidth;
 
 /**
  *  Specifies the amount of spacing between the content view and the trailing edge of rightBarButtonItem.
  *
  *  @discussion The default value is `8.0f`.
  */
-@property (assign, nonatomic) CGFloat rightContentPadding;
+//@property (assign, nonatomic) CGFloat rightContentPadding;
 
 /**
  *  The container view for the rightBarButtonItem.
@@ -113,7 +137,7 @@ FOUNDATION_EXPORT const CGFloat kJSQMessagesToolbarContentViewHorizontalSpacingD
  *  However, you will be completely responsible for responding to all touch events for these buttons
  *  in your `JSQMessagesViewController` subclass.
  */
-@property (weak, nonatomic, readonly, nullable) UIView *rightBarButtonContainerView;
+//@property (nonatomic, readonly, nullable) UIView *rightBarButtonContainerView;
 
 #pragma mark - Class methods
 

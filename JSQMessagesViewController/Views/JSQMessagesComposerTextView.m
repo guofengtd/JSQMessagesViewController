@@ -36,8 +36,6 @@
 
 - (void)jsq_configureTextView
 {
-    [self setTranslatesAutoresizingMaskIntoConstraints:NO];
-
     CGFloat cornerRadius = 6.0f;
 
     self.backgroundColor = [UIColor whiteColor];
@@ -62,7 +60,8 @@
     self.dataDetectorTypes = UIDataDetectorTypeNone;
     self.keyboardAppearance = UIKeyboardAppearanceDefault;
     self.keyboardType = UIKeyboardTypeDefault;
-    self.returnKeyType = UIReturnKeyDefault;
+    self.returnKeyType = UIReturnKeySend;
+    self.enablesReturnKeyAutomatically = YES;
 
     self.text = nil;
 
@@ -71,8 +70,6 @@
     _placeHolderInsets = UIEdgeInsetsMake(5.0, 7.0, 5.0, 7.0);
 
     [self associateConstraints];
-
-    [self jsq_addTextViewNotificationObservers];
 }
 
 - (instancetype)initWithFrame:(CGRect)frame textContainer:(NSTextContainer *)textContainer
@@ -90,9 +87,7 @@
     [self jsq_configureTextView];
 }
 
-- (void)dealloc
-{
-    [self jsq_removeTextViewNotificationObservers];
+- (void)dealloc {
 }
 
 // TODO: we should just set these from the xib
@@ -238,39 +233,6 @@
 }
 
 #pragma mark - Notifications
-
-- (void)jsq_addTextViewNotificationObservers
-{
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(jsq_didReceiveTextViewNotification:)
-                                                 name:UITextViewTextDidChangeNotification
-                                               object:self];
-
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(jsq_didReceiveTextViewNotification:)
-                                                 name:UITextViewTextDidBeginEditingNotification
-                                               object:self];
-
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(jsq_didReceiveTextViewNotification:)
-                                                 name:UITextViewTextDidEndEditingNotification
-                                               object:self];
-}
-
-- (void)jsq_removeTextViewNotificationObservers
-{
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:UITextViewTextDidChangeNotification
-                                                  object:self];
-
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:UITextViewTextDidBeginEditingNotification
-                                                  object:self];
-
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:UITextViewTextDidEndEditingNotification
-                                                  object:self];
-}
 
 - (void)jsq_didReceiveTextViewNotification:(NSNotification *)notification
 {
