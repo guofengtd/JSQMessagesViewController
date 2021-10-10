@@ -60,6 +60,7 @@ didChangeAudioCategory:(NSString *)category
  *  A data object that contains an audio resource.
  */
 @property (nonatomic, strong, nullable) NSData *audioData;
+@property (nonatomic, assign)           CGFloat duration;
 
 /**
  *  Initializes and returns a audio media item having the given audioData.
@@ -74,6 +75,7 @@ didChangeAudioCategory:(NSString *)category
  *  Once the audio is available you can set the `audioData` property.
  */
 - (instancetype)initWithData:(nullable NSData *)audioData
+                    duration:(CGFloat)duration
          audioViewAttributes:(JSQAudioMediaViewAttributes *)audioViewAttributes NS_DESIGNATED_INITIALIZER;
 
 /**
@@ -105,14 +107,16 @@ didChangeAudioCategory:(NSString *)category
  *  you may initialize a `JSQAudioMediaItem` with a `nil` audioData.
  *  Once the audio is available you can set the `audioData` property.
  */
-- (instancetype)initWithData:(nullable NSData *)audioData;
+- (instancetype)initWithData:(nullable NSData *)audioData
+                    duration:(CGFloat)duration;
 
 /**
  *  Sets or updates the data object in an audio media item with the data specified at audioURL.
  *
  *  @param audioURL A File URL containing the location of the audio data.
  */
-- (void)setAudioDataWithUrl:(nonnull NSURL *)audioURL;
+- (void)setAudioDataWithUrl:(nonnull NSURL *)audioURL
+                   duration:(CGFloat)duration;
 
 @end
 

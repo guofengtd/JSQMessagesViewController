@@ -130,5 +130,12 @@
     return [UIImage jsq_bubbleImageFromBundleWithName:@"extra"];
 }
 
++ (UIImage *)jsq_voiceLeftSpeaking:(NSInteger)index {
+    return [UIImage jsq_bubbleImageFromBundleWithName:[NSString stringWithFormat:@"speaker_left_%d", index]];
+}
+
++ (UIImage *)jsq_voiceRightSpeaking:(NSInteger)index {
+    return [UIImage jsq_bubbleImageFromBundleWithName:[NSString stringWithFormat:@"speaker_right_%d", index]];
+}
 
 @end

@@ -52,6 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  The value of this property depends on how the object was initialized.
  */
 @property (assign, nonatomic, readonly) BOOL isMediaMessage;
+@property (assign, nonatomic, readonly) BOOL isVoiceMessage;
 
 /**
  *  Returns the body text of the message, or `nil` if the message is a media message.

@@ -46,6 +46,8 @@ NS_ASSUME_NONNULL_BEGIN
  *  This view controller is the toolbar's delegate.
  */
 @property (strong, nonatomic, readonly) JSQMessagesInputToolbar *inputToolbar;
+@property (nonatomic, assign) BOOL      showEmojiPad;
+@property (nonatomic, assign) BOOL      showExtraPad;
 
 /**
  *  Specifies whether or not the view controller should automatically scroll to the most recent message
@@ -194,12 +196,6 @@ NS_ASSUME_NONNULL_BEGIN
          senderDisplayName:(NSString *)senderDisplayName
                       date:(NSDate *)date;
 
-/**
- *  This method is called when the user taps the accessory button on the `inputToolbar`.
- *
- *  @param sender The accessory button that was pressed by the user.
- */
-- (void)didPressAccessoryButton:(UIButton *)sender;
 
 /**
  *  Animates the sending of a new message. See `finishSendingMessageAnimated:` for more details.

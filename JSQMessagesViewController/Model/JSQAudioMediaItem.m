@@ -44,32 +44,37 @@
 
 #pragma mark - Initialization
 
-- (instancetype)initWithData:(NSData *)audioData audioViewAttributes:(JSQAudioMediaViewAttributes *)audioViewAttributes
-{
+- (instancetype)initWithData:(NSData *)audioData
+                    duration:(CGFloat)duration
+         audioViewAttributes:(JSQAudioMediaViewAttributes *)audioViewAttributes {
     NSParameterAssert(audioViewAttributes != nil);
 
-    self = [super init];
-    if (self) {
+    if (self = [super init]) {
         _cachedMediaView = nil;
         _audioData = [audioData copy];
+        _duration = duration;
         _audioViewAttributes = audioViewAttributes;
     }
+    
     return self;
 }
 
-- (instancetype)initWithData:(NSData *)audioData
-{
-    return [self initWithData:audioData audioViewAttributes:[[JSQAudioMediaViewAttributes alloc] init]];
+- (instancetype)initWithData:(NSData *)audioData duration:(CGFloat)duration {
+    return [self initWithData:audioData
+                     duration:duration
+          audioViewAttributes:[[JSQAudioMediaViewAttributes alloc] init]];
 }
 
-- (instancetype)initWithAudioViewAttributes:(JSQAudioMediaViewAttributes *)audioViewAttributes
-{
-    return [self initWithData:nil audioViewAttributes:audioViewAttributes];
+- (instancetype)initWithAudioViewAttributes:(JSQAudioMediaViewAttributes *)audioViewAttributes {
+    return [self initWithData:nil
+                     duration:0
+          audioViewAttributes:audioViewAttributes];
 }
 
-- (instancetype)init
-{
-    return [self initWithData:nil audioViewAttributes:[[JSQAudioMediaViewAttributes alloc] init]];
+- (instancetype)init {
+    return [self initWithData:nil
+                     duration:0
+          audioViewAttributes:[[JSQAudioMediaViewAttributes alloc] init]];
 }
 
 - (void)dealloc
@@ -349,24 +354,24 @@
 
 #pragma mark - NSCoding
 
-- (instancetype)initWithCoder:(NSCoder *)aDecoder
-{
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
     NSData *data = [aDecoder decodeObjectForKey:NSStringFromSelector(@selector(audioData))];
-    return [self initWithData:data];
+    return [self initWithData:data
+                     duration:0];
 }
 
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
+- (void)encodeWithCoder:(NSCoder *)aCoder {
     [super encodeWithCoder:aCoder];
     [aCoder encodeObject:self.audioData forKey:NSStringFromSelector(@selector(audioData))];
 }
 
 #pragma mark - NSCopying
 
-- (instancetype)copyWithZone:(NSZone *)zone
-{
+- (instancetype)copyWithZone:(NSZone *)zone {
     JSQAudioMediaItem *copy = [[[self class] allocWithZone:zone] initWithData:self.audioData
+                                                                     duration:self.duration
                                                           audioViewAttributes:self.audioViewAttributes];
+    
     copy.appliesMediaViewMaskAsOutgoing = self.appliesMediaViewMaskAsOutgoing;
     return copy;
 }

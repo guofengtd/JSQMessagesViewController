@@ -108,7 +108,7 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
 }
 
 
-@interface JSQMessagesViewController () 
+@interface JSQMessagesViewController () < UIScrollViewDelegate >
 
 @property (weak, nonatomic) IBOutlet JSQMessagesCollectionView *collectionView;
 @property (strong, nonatomic) IBOutlet JSQMessagesInputToolbar *inputToolbar;
@@ -285,22 +285,6 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
     return UIInterfaceOrientationMaskAll;
 }
 
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
-{
-    [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
-    [self.collectionView.collectionViewLayout invalidateLayoutWithContext:[JSQMessagesCollectionViewFlowLayoutInvalidationContext context]];
-}
-
-- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
-{
-    [super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
-    if (self.showTypingIndicator) {
-        self.showTypingIndicator = NO;
-        self.showTypingIndicator = YES;
-        [self.collectionView reloadData];
-    }
-}
-
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
     [self jsq_resetLayoutAndCaches];
@@ -325,11 +309,6 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
                   senderId:(NSString *)senderId
          senderDisplayName:(NSString *)senderDisplayName
                       date:(NSDate *)date
-{
-    NSAssert(NO, @"Error! required method not implemented in subclass. Need to implement %s", __PRETTY_FUNCTION__);
-}
-
-- (void)didPressAccessoryButton:(UIButton *)sender
 {
     NSAssert(NO, @"Error! required method not implemented in subclass. Need to implement %s", __PRETTY_FUNCTION__);
 }
@@ -399,7 +378,7 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
     CGFloat collectionViewContentHeight = [self.collectionView.collectionViewLayout collectionViewContentSize].height;
     BOOL isContentTooSmall = (collectionViewContentHeight < CGRectGetHeight(self.collectionView.bounds));
 
-    if (isContentTooSmall) {
+    if (NO && isContentTooSmall) {
         //  workaround for the first few messages not scrolling
         //  when the collection view content size is too small, `scrollToItemAtIndexPath:` doesn't work properly
         //  this seems to be a UIKit bug, see #256 on GitHub
@@ -728,7 +707,9 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
  didTapAvatarImageView:(UIImageView *)avatarImageView
            atIndexPath:(NSIndexPath *)indexPath { }
 
-- (void)collectionView:(JSQMessagesCollectionView *)collectionView didTapMessageBubbleAtIndexPath:(NSIndexPath *)indexPath { }
+- (void)collectionView:(JSQMessagesCollectionView *)collectionView didTapMessageCell:(nonnull JSQMessagesCollectionViewCell *)cell bubbleAtIndexPath:(nonnull NSIndexPath *)indexPath {
+    
+}
 
 - (void)collectionView:(JSQMessagesCollectionView *)collectionView
  didTapCellAtIndexPath:(NSIndexPath *)indexPath
@@ -736,45 +717,53 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
 
 #pragma mark - Input toolbar delegate
 
-- (void)messagesInputToolbar:(JSQMessagesInputToolbar *)toolbar didPressLeftBarButton:(UIButton *)sender
-{
-    if (toolbar.sendButtonLocation == JSQMessagesInputSendButtonLocationLeft) {
-        [self didPressSendButton:sender
-                 withMessageText:[self jsq_currentlyComposedMessageText]
-                        senderId:[self.collectionView.dataSource senderId]
-               senderDisplayName:[self.collectionView.dataSource senderDisplayName]
-                            date:[NSDate date]];
-    }
-    else {
-        [self didPressAccessoryButton:sender];
-    }
+- (void)messagesInputToolbar:(JSQMessagesInputToolbar *)toolbar didPressLeftBarButton:(UIButton *)sender {
+    [self didPressSendButton:sender
+             withMessageText:[self jsq_currentlyComposedMessageText]
+                    senderId:[self.collectionView.dataSource senderId]
+           senderDisplayName:[self.collectionView.dataSource senderDisplayName]
+                        date:[NSDate date]];
 }
 
 - (void)messagesInputToolbar:(JSQMessagesInputToolbar *)toolbar didPressEmojiBarButton:(nonnull UIButton *)sender {
-    if (toolbar.sendButtonLocation == JSQMessagesInputSendButtonLocationRight) {
-        [self didPressSendButton:sender
-                 withMessageText:[self jsq_currentlyComposedMessageText]
-                        senderId:[self.collectionView.dataSource senderId]
-               senderDisplayName:[self.collectionView.dataSource senderDisplayName]
-                            date:[NSDate date]];
+    self.showExtraPad = NO;
+    self.inputToolbar.contentView.extraView.mode = JSQToolbarExtraModeEmoji;
+    if (self.inputToolbar.textMode) {
+        self.showEmojiPad = YES;
+        self.inputToolbar.textMode = NO;
     }
     else {
-        [self didPressAccessoryButton:sender];
+        self.showEmojiPad = !self.showEmojiPad;
     }
+    
+    [self notifyInputPad];
 }
 
 - (void)messagesInputToolbar:(JSQMessagesInputToolbar *)toolbar didPressExtraBarButton:(nonnull UIButton *)sender {
-    if (toolbar.sendButtonLocation == JSQMessagesInputSendButtonLocationRight) {
-        [self didPressSendButton:sender
-                 withMessageText:[self jsq_currentlyComposedMessageText]
-                        senderId:[self.collectionView.dataSource senderId]
-               senderDisplayName:[self.collectionView.dataSource senderDisplayName]
-                            date:[NSDate date]];
+    self.showEmojiPad = NO;
+    self.inputToolbar.contentView.extraView.mode = JSQToolbarExtraModeExtra;
+    if (self.inputToolbar.textMode) {
+        self.showExtraPad = YES;
+        self.inputToolbar.textMode = NO;
     }
     else {
-        [self didPressAccessoryButton:sender];
+        self.showExtraPad = !self.showExtraPad;
     }
+    
+    [self notifyInputPad];
 }
+
+- (void)notifyInputPad {
+    NSValue *value = [NSValue valueWithCGRect:CGRectZero];
+    NSDictionary *userInfo = @{UIKeyboardFrameEndUserInfoKey: value,
+                               UIKeyboardAnimationCurveUserInfoKey: @(UIViewAnimationCurveEaseInOut),
+                               UIKeyboardAnimationDurationUserInfoKey: @(.25)};
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIKeyboardWillChangeFrameNotification
+                                                        object:nil
+                                                      userInfo:userInfo];
+}
+
 
 - (NSString *)jsq_currentlyComposedMessageText
 {
@@ -962,11 +951,26 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
     CGRect keyboardEndFrame = [userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
 
     CGRect rect = CGRectIntersection([UIScreen mainScreen].bounds, keyboardEndFrame);
-    if (CGRectGetHeight(rect) > 100 || self.view.safeAreaInsets.bottom == 0) {
+    
+    self.inputToolbar.contentView.extraView.hidden = YES;
+    
+    if (!self.showEmojiPad &&!self.showExtraPad && CGRectGetHeight(rect) > 100 || self.view.safeAreaInsets.bottom == 0) {
         self.inputToolbar.contentView.leftBarButtonContainerBottomPadding = 8;
     }
     else {
-        self.inputToolbar.contentView.leftBarButtonContainerBottomPadding = 32;
+        CGFloat height = 42;
+        if (self.showEmojiPad) {
+            height += 320;
+            keyboardEndFrame.size.height -= 320;
+            self.inputToolbar.contentView.extraView.hidden = NO;
+        }
+        else if (self.showExtraPad) {
+            height += 280;
+            keyboardEndFrame.size.height -= 280;
+            self.inputToolbar.contentView.extraView.hidden = NO;
+        }
+        
+        self.inputToolbar.contentView.leftBarButtonContainerBottomPadding = height;
     }
     
     if (CGRectIsNull(keyboardEndFrame)) {
@@ -987,6 +991,16 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
                                                        bottomValue:CGRectGetHeight(keyboardEndFrame) + insets.bottom];
                      }
                      completion:nil];
+}
+
+#pragma mark - UIScrollViewDelegate
+
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    if (self.showEmojiPad || self.showExtraPad) {
+        self.showEmojiPad = self.showExtraPad = NO;
+        
+        [self notifyInputPad];
+    }
 }
 
 @end

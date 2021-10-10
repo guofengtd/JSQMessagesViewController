@@ -49,6 +49,18 @@ typedef NS_ENUM(NSUInteger, JSQMessagesToolbarPTTViewState) {
 
 @end
 
+typedef enum : NSUInteger {
+    JSQToolbarExtraModeNone,
+    JSQToolbarExtraModeEmoji,
+    JSQToolbarExtraModeExtra,
+} JSQToolbarExtraMode;
+
+@interface JSQMessagesToolbarExtraView : UIView
+
+@property (nonatomic, assign) JSQToolbarExtraMode   mode;
+
+@end
+
 /**
  *  A `JSQMessagesToolbarContentView` represents the content displayed in a `JSQMessagesInputToolbar`.
  *  These subviews consist of a left button, a text view, and a right button. One button is used as
@@ -63,6 +75,7 @@ typedef NS_ENUM(NSUInteger, JSQMessagesToolbarPTTViewState) {
  */
 @property (nonatomic, readonly, nullable) JSQMessagesComposerTextView   *textView;
 @property (nonatomic, readonly, nullable) JSQMessagesToolbarPTTView     *pttView;
+@property (nonatomic, readonly, nullable) JSQMessagesToolbarExtraView   *extraView;
 
 /**
  *  A custom button item displayed on the left of the toolbar content view.

@@ -74,6 +74,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  Return `YES` if this item is a media message, and `NO` if it is a text message.
  */
 - (BOOL)isMediaMessage;
+- (BOOL)isVoiceMessage;
 
 /**
  *  @return An integer that can be used as a table address in a hash table structure.

@@ -36,7 +36,6 @@ static void * kJSQMessagesInputToolbarKeyValueObservingContext = &kJSQMessagesIn
 @end
 
 
-
 @implementation JSQMessagesInputToolbar
 
 @dynamic delegate;
@@ -104,14 +103,12 @@ static void * kJSQMessagesInputToolbarKeyValueObservingContext = &kJSQMessagesIn
     [self.delegate messagesInputToolbar:self didPressLeftBarButton:sender];
 }
 
-- (void)jsq_emojiBarButtonPressed:(UIButton *)sender
-{
-    
+- (void)jsq_emojiBarButtonPressed:(UIButton *)sender {
+    [self.delegate messagesInputToolbar:self didPressEmojiBarButton:sender];
 }
 
-- (void)jsq_extraBarButtonPressed:(UIButton *)sender
-{
-    
+- (void)jsq_extraBarButtonPressed:(UIButton *)sender {
+    [self.delegate messagesInputToolbar:self didPressExtraBarButton:sender];
 }
 
 

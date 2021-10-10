@@ -7,17 +7,12 @@
 
 #import "JSQVoiceMediaItem.h"
 #import "JSQMessagesMediaViewBubbleImageMasker.h"
+#import "JSQVoicePlayView.h"
 
 @interface JSQVoiceMediaItem ()
 
-@property (strong, nonatomic) UIView *cachedMediaView;
-
-@property (strong, nonatomic) UIButton *playButton;
-
-@property (strong, nonatomic) UIProgressView *progressView;
-@property (strong, nonatomic) UILabel *progressLabel;
-@property (strong, nonatomic) NSTimer *progressTimer;
-
+@property (strong, nonatomic) UIView        *cachedMediaView;
+@property (strong, nonatomic) NSTimer       *progressTimer;
 @property (strong, nonatomic) AVAudioPlayer *audioPlayer;
 
 @end
@@ -27,32 +22,44 @@
 
 #pragma mark - Initialization
 
-- (instancetype)initWithData:(NSData *)audioData audioViewAttributes:(JSQAudioMediaViewAttributes *)audioViewAttributes
+- (instancetype)initWithData:(NSData *)audioData
+                    duration:(CGFloat)duration
+              maskAsOutgoing:(BOOL)maskAsOutgoing
+         audioViewAttributes:(JSQAudioMediaViewAttributes *)audioViewAttributes
 {
     NSParameterAssert(audioViewAttributes != nil);
 
-    self = [super init];
-    if (self) {
+    if (self = [super initWithMaskAsOutgoing:maskAsOutgoing]) {
         _cachedMediaView = nil;
         _audioData = [audioData copy];
+        _duration = duration;
         _audioViewAttributes = audioViewAttributes;
     }
+    
     return self;
 }
 
 - (instancetype)initWithData:(NSData *)audioData
-{
-    return [self initWithData:audioData audioViewAttributes:[[JSQAudioMediaViewAttributes alloc] init]];
+                    duration:(CGFloat)duration
+              maskAsOutgoing:(BOOL)maskAsOutgoing {
+    return [self initWithData:audioData
+                     duration:duration
+               maskAsOutgoing:maskAsOutgoing
+          audioViewAttributes:[[JSQAudioMediaViewAttributes alloc] init]];
 }
 
-- (instancetype)initWithAudioViewAttributes:(JSQAudioMediaViewAttributes *)audioViewAttributes
-{
-    return [self initWithData:nil audioViewAttributes:audioViewAttributes];
+- (instancetype)initWithAudioViewAttributes:(JSQAudioMediaViewAttributes *)audioViewAttributes {
+    return [self initWithData:nil
+                     duration:0
+               maskAsOutgoing:YES
+          audioViewAttributes:audioViewAttributes];
 }
 
-- (instancetype)init
-{
-    return [self initWithData:nil audioViewAttributes:[[JSQAudioMediaViewAttributes alloc] init]];
+- (instancetype)init {
+    return [self initWithData:nil
+                     duration:0
+               maskAsOutgoing:YES
+          audioViewAttributes:[[JSQAudioMediaViewAttributes alloc] init]];
 }
 
 - (void)dealloc
@@ -66,9 +73,6 @@
     [_audioPlayer stop];
     _audioPlayer = nil;
 
-    _playButton = nil;
-    _progressView = nil;
-    _progressLabel = nil;
     [self stopProgressTimer];
 
     _cachedMediaView = nil;
@@ -115,9 +119,7 @@
 - (void)updateProgressTimer:(NSTimer *)sender
 {
     if (self.audioPlayer.playing) {
-        self.progressView.progress = self.audioPlayer.currentTime / self.audioPlayer.duration;
-        self.progressLabel.text = [self timestampString:self.audioPlayer.currentTime
-                                            forDuration:self.audioPlayer.duration];
+        
     }
 }
 
@@ -158,20 +160,10 @@
     }
 
     if (self.audioPlayer.playing) {
-        self.playButton.selected = NO;
         [self stopProgressTimer];
         [self.audioPlayer stop];
     }
     else {
-        // fade the button from play to pause
-        [UIView transitionWithView:self.playButton
-                          duration:.2
-                           options:UIViewAnimationOptionTransitionCrossDissolve
-                        animations:^{
-                            self.playButton.selected = YES;
-                        }
-                        completion:nil];
-
         [self startProgressTimer];
         [self.audioPlayer play];
     }
@@ -184,15 +176,12 @@
 
     // set progress to full, then fade back to the default state
     [self stopProgressTimer];
-    self.progressView.progress = 1;
+    
     [UIView transitionWithView:self.cachedMediaView
                       duration:.2
                        options:UIViewAnimationOptionTransitionCrossDissolve
                     animations:^{
-                        self.progressView.progress = 0;
-                        self.playButton.selected = NO;
-                        self.progressLabel.text = [self timestampString:self.audioPlayer.duration
-                                                            forDuration:self.audioPlayer.duration];
+                        
                     }
                     completion:nil];
 }
@@ -201,7 +190,10 @@
 
 - (CGSize)mediaViewDisplaySize
 {
-    return CGSizeMake(160.0f,
+    CGFloat width = 80 + 160 * self.duration / 60;
+    width = MIN(240, width);
+    
+    return CGSizeMake(width,
                       self.audioViewAttributes.controlInsets.top +
                       self.audioViewAttributes.controlInsets.bottom +
                       self.audioViewAttributes.playButtonImage.size.height);
@@ -210,87 +202,31 @@
 - (UIView *)mediaView
 {
     if (self.audioData && self.cachedMediaView == nil) {
-        if (self.audioData) {
-            self.audioPlayer = [[AVAudioPlayer alloc] initWithData:self.audioData error:nil];
-            self.audioPlayer.delegate = self;
-        }
-
         // reverse the insets based on the message direction
         CGFloat leftInset, rightInset;
         if (self.appliesMediaViewMaskAsOutgoing) {
             leftInset = self.audioViewAttributes.controlInsets.left;
             rightInset = self.audioViewAttributes.controlInsets.right;
-        } else {
+        }
+        else {
             leftInset = self.audioViewAttributes.controlInsets.right;
             rightInset = self.audioViewAttributes.controlInsets.left;
         }
         
         // create container view for the various controls
         CGSize size = [self mediaViewDisplaySize];
-        UIView * playView = [[UIView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, size.width, size.height)];
+        JSQVoicePlayView *playView = [[JSQVoicePlayView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, size.width, size.height)
+                                                                  isOutgoing:self.appliesMediaViewMaskAsOutgoing];
+        
         playView.backgroundColor = self.audioViewAttributes.backgroundColor;
+        [playView setAudioData:self.audioData
+                      duration:self.duration];
+        
         playView.contentMode = UIViewContentModeCenter;
         playView.clipsToBounds = YES;
-
-        // create the play button
-        CGRect buttonFrame = CGRectMake(leftInset,
-                                        self.audioViewAttributes.controlInsets.top,
-                                        self.audioViewAttributes.playButtonImage.size.width,
-                                        self.audioViewAttributes.playButtonImage.size.height);
         
-        self.playButton = [[UIButton alloc] initWithFrame:buttonFrame];
-        [self.playButton setImage:self.audioViewAttributes.playButtonImage forState:UIControlStateNormal];
-        [self.playButton setImage:self.audioViewAttributes.pauseButtonImage forState:UIControlStateSelected];
-        [self.playButton addTarget:self action:@selector(onPlayButton:) forControlEvents:UIControlEventTouchUpInside];
-        [playView addSubview:self.playButton];
-
-        // create a label to show the duration / elapsed time
-        NSString *durationString = [self timestampString:self.audioPlayer.duration
-                                             forDuration:self.audioPlayer.duration];
-        NSString *maxWidthString = [@"" stringByPaddingToLength:[durationString length] withString:@"0" startingAtIndex:0];
-
-        // this is cheesy, but it centers the progress bar without extra space and
-        // without causing it to wiggle from side to side as the label text changes
-        CGSize labelSize = CGSizeMake(36, 18);
-        if ([durationString length] < 4) {
-            labelSize = CGSizeMake(18,18);
-        }
-        else if ([durationString length] < 5) {
-            labelSize = CGSizeMake(24,18);
-        }
-        else if ([durationString length] < 6) {
-            labelSize = CGSizeMake(30, 18);
-        }
-
-        CGRect labelFrame = CGRectMake(size.width - labelSize.width - rightInset,
-                                       self.audioViewAttributes.controlInsets.top, labelSize.width, labelSize.height);
-        self.progressLabel = [[UILabel alloc] initWithFrame:labelFrame];
-        self.progressLabel.textAlignment = NSTextAlignmentLeft;
-        self.progressLabel.adjustsFontSizeToFitWidth = YES;
-        self.progressLabel.textColor = self.audioViewAttributes.tintColor;
-        self.progressLabel.font = self.audioViewAttributes.labelFont;
-        self.progressLabel.text = maxWidthString;
-
-        // sizeToFit adjusts the frame's height to the font
-        [self.progressLabel sizeToFit];
-        labelFrame.origin.x = size.width - self.progressLabel.frame.size.width - rightInset;
-        labelFrame.origin.y =  ((size.height - self.progressLabel.frame.size.height) / 2);
-        labelFrame.size.width = self.progressLabel.frame.size.width;
-        labelFrame.size.height =  self.progressLabel.frame.size.height;
-        self.progressLabel.frame = labelFrame;
-        self.progressLabel.text = durationString;
-        [playView addSubview:self.progressLabel];
-
-        // create a progress bar
-        self.progressView = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
-        CGFloat xOffset = self.playButton.frame.origin.x + self.playButton.frame.size.width + self.audioViewAttributes.controlPadding;
-        CGFloat width = labelFrame.origin.x - xOffset - self.audioViewAttributes.controlPadding;
-        self.progressView.frame = CGRectMake(xOffset, (size.height - self.progressView.frame.size.height) / 2,
-                                             width, self.progressView.frame.size.height);
-        self.progressView.tintColor = self.audioViewAttributes.tintColor;
-        [playView addSubview:self.progressView];
-
-//        [JSQMessagesMediaViewBubbleImageMasker applyBubbleImageMaskToMediaView:playView isOutgoing:self.appliesMediaViewMaskAsOutgoing];
+        [JSQMessagesMediaViewBubbleImageMasker applyBubbleImageMaskToMediaView:playView
+                                                                    isOutgoing:self.appliesMediaViewMaskAsOutgoing];
         self.cachedMediaView = playView;
     }
 
@@ -335,7 +271,9 @@
 - (instancetype)initWithCoder:(NSCoder *)aDecoder
 {
     NSData *data = [aDecoder decodeObjectForKey:NSStringFromSelector(@selector(audioData))];
-    return [self initWithData:data];
+    return [self initWithData:data
+                     duration:0
+               maskAsOutgoing:YES];
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
@@ -349,7 +287,10 @@
 - (instancetype)copyWithZone:(NSZone *)zone
 {
     JSQVoiceMediaItem *copy = [[[self class] allocWithZone:zone] initWithData:self.audioData
+                                                                     duration:self.duration
+                                                               maskAsOutgoing:self.appliesMediaViewMaskAsOutgoing
                                                           audioViewAttributes:self.audioViewAttributes];
+    
     copy.appliesMediaViewMaskAsOutgoing = self.appliesMediaViewMaskAsOutgoing;
     return copy;
 }

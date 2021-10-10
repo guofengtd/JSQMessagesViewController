@@ -20,6 +20,8 @@
 #import "JSQMessagesToolbarButtonFactory.h"
 
 #import "UIView+JSQMessages.h"
+#import <AVFAudio/AVAudioSession.h>
+
 
 @interface JSQMessagesToolbarPTTView ()
 
@@ -62,16 +64,16 @@
     
     BOOL pushDown = state == PTTViewStatePushDown || state == PTTViewStateMoveOut;
     
-    UIColor *color = pushDown?[UIColor lightGrayColor]:[UIColor colorWithRed:250/256. green:246/256. blue:252/256. alpha:1];
+    UIColor *color = pushDown?[UIColor lightGrayColor]:[UIColor whiteColor];
     UIImage *image = [UIImage imageWithColor:color
-                                 borderColor:[UIColor greenColor]
+                                 borderColor:nil
                                         size:CGSizeMake(14, 14)
                                  rectCorners:UIRectCornerAllCorners
                                  cornerRadii:CGSizeMake(4, 4)];
     
     self.backgroundView.image = [image stretchableImageWithLeftCapWidth:7 topCapHeight:7];
     
-    NSString *text = @"Push to talk";
+    NSString *text = @"Hold to speak";
     UIColor *textColor = [UIColor darkTextColor];
     switch (state) {
         case PTTViewStateNormal:
@@ -131,6 +133,210 @@
 
 @end
 
+@interface JSQMessagesToolbarEmojiCell : BaseCollectionViewCell
+
+@property (nonatomic, strong) UILabel       *label;
+
+@end
+
+@implementation JSQMessagesToolbarEmojiCell
+
+- (instancetype)initWithFrame:(CGRect)frame {
+    if (self = [super initWithFrame:frame]) {
+        UILabel *label = [UILabel new];
+        label.font = [UIFont systemFontOfSize:27];
+        label.adjustsFontSizeToFitWidth = YES;
+        label.text = @"😄";
+        [CONTENT_VIEW addSubview:label];
+        [label mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.center.equalTo(CONTENT_VIEW);
+        }];
+        self.label = label;
+    }
+    
+    return self;
+}
+
+@end
+
+@interface JSQMessagesToolbarExtraCell : BaseCollectionViewCell
+@end
+
+@implementation JSQMessagesToolbarExtraCell
+
+- (instancetype)initWithFrame:(CGRect)frame {
+    if (self = [super initWithFrame:frame]) {
+        self.backgroundColor = [UIColor lightGrayColor];
+    }
+    
+    return self;
+}
+
+@end
+
+@interface JSQMessagesToolbarSectionHeader : UICollectionReusableView
+
+@property (nonatomic, strong) UILabel   *label;
+
+@end
+
+@implementation JSQMessagesToolbarSectionHeader
+
++ (NSString *)cellReuseIdentifier {
+    return @"JSQMessagesToolbarSectionHeader";
+}
+
+- (instancetype)initWithFrame:(CGRect)frame {
+    if (self = [super initWithFrame:frame]) {
+        UILabel *label = [UILabel new];
+        label.font = [UIFont systemFontOfSize:13];
+        [self addSubview:label];
+        [label mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.edges.equalTo(self).insets(UIEdgeInsetsMake(0, 15, 0, 15));
+        }];
+        self.label = label;
+    }
+    
+    return self;
+}
+
+@end
+
+@interface JSQMessagesToolbarExtraView () < UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UICollectionViewDelegate >
+
+@property (nonatomic, strong) UICollectionView      *collectionView;
+
+@end
+
+@implementation JSQMessagesToolbarExtraView
+
+- (instancetype)initWithFrame:(CGRect)frame {
+    if (self = [super initWithFrame:frame]) {
+        UICollectionViewFlowLayout *layout = [UICollectionViewFlowLayout new];
+        layout.scrollDirection = UICollectionViewScrollDirectionVertical;
+        
+        UICollectionView *collectionView = [[UICollectionView alloc] initWithFrame:CGRectZero
+                                                              collectionViewLayout:layout];
+        
+        collectionView.dataSource = self;
+        collectionView.delegate = self;
+        
+        [collectionView registerClass:[JSQMessagesToolbarEmojiCell class]
+           forCellWithReuseIdentifier:[JSQMessagesToolbarEmojiCell cellReuseIdentifier]];
+        
+        [collectionView registerClass:[JSQMessagesToolbarExtraCell class]
+           forCellWithReuseIdentifier:[JSQMessagesToolbarExtraCell cellReuseIdentifier]];
+        
+        [collectionView registerClass:[JSQMessagesToolbarSectionHeader class]
+            forSupplementaryViewOfKind:UICollectionElementKindSectionHeader
+                  withReuseIdentifier:[JSQMessagesToolbarSectionHeader cellReuseIdentifier]];
+        
+        [self addSubview:collectionView];
+        [collectionView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.edges.equalTo(self);
+        }];
+        
+        self.collectionView = collectionView;
+    }
+    
+    return self;
+}
+
+- (void)setMode:(JSQToolbarExtraMode)mode {
+    _mode = mode;
+    
+    [self.collectionView reloadData];
+}
+
+#pragma mark - UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UICollectionViewDelegate
+
+- (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
+    return UIEdgeInsetsMake(0, 15, 15, 15);
+}
+
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
+    switch (self.mode) {
+        case JSQToolbarExtraModeEmoji:
+            return CGSizeMake(32, 32);
+            
+        case JSQToolbarExtraModeExtra:
+            return CGSizeMake(48, 48);
+            
+        default:
+            return CGSizeZero;
+    }
+}
+
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section {
+    return 8;
+}
+
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
+    return 8;
+}
+
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
+    switch (self.mode) {
+        case JSQToolbarExtraModeEmoji:
+            return 2;
+            
+        case JSQToolbarExtraModeExtra:
+            return 1;
+            
+        default:
+            return 0;
+    }
+}
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+    switch (self.mode) {
+        case JSQToolbarExtraModeEmoji:
+            return 48;
+            
+        case JSQToolbarExtraModeExtra:
+            return 8;
+            
+        default:
+            return 0;
+    }
+}
+
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section {
+    return CGSizeMake(120, 32);
+}
+
+- (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
+    return [collectionView dequeueReusableSupplementaryViewOfKind:kind
+                                              withReuseIdentifier:[JSQMessagesToolbarSectionHeader cellReuseIdentifier]
+                                                     forIndexPath:indexPath];
+}
+
+- (void)collectionView:(UICollectionView *)collectionView willDisplaySupplementaryView:(JSQMessagesToolbarSectionHeader *)view
+        forElementKind:(NSString *)elementKind atIndexPath:(NSIndexPath *)indexPath {
+    view.label.text = @"全部表情";
+}
+
+- (__kindof UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+    switch (self.mode) {
+        case JSQToolbarExtraModeEmoji:
+            return [collectionView dequeueReusableCellWithReuseIdentifier:[JSQMessagesToolbarEmojiCell cellReuseIdentifier]
+                                                             forIndexPath:indexPath];
+            
+        case JSQToolbarExtraModeExtra:
+            return [collectionView dequeueReusableCellWithReuseIdentifier:[JSQMessagesToolbarExtraCell cellReuseIdentifier]
+                                                             forIndexPath:indexPath];
+        default:
+            return nil;
+    }
+}
+
+- (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
+    
+}
+
+@end
+
+
 @interface JSQMessagesToolbarContainerView : UIView
 
 @property (nonatomic, strong) UIImageView   *backgroundView;
@@ -152,24 +358,13 @@
     return self;
 }
 
-- (void)setBorderColor:(UIColor *)color
-                 width:(CGFloat)width
-               rounded:(BOOL)rounded {
-    UIImage *image = [UIImage imageWithColor:[UIColor lightTextColor]
-                                 borderColor:[UIColor darkGrayColor]
-                                        size:CGSizeMake(16, 16)
-                                 rectCorners:UIRectCornerAllCorners
-                                 cornerRadii:CGSizeMake(5, 5)];
-    
-    self.backgroundView.image = [image stretchableImageWithLeftCapWidth:5 topCapHeight:5];
-}
-
 @end
 
 @interface JSQMessagesToolbarContentView ()
 
 @property (nonatomic, strong) JSQMessagesComposerTextView       *textView;
 @property (nonatomic, strong) JSQMessagesToolbarPTTView         *pttView;
+@property (nonatomic, strong) JSQMessagesToolbarExtraView       *extraView;
 
 @property (nonatomic, strong) JSQMessagesToolbarContainerView   *leftBarButtonContainerView;
 @property (nonatomic, strong) JSQMessagesToolbarContainerView   *emojiBarButtonContainerView;
@@ -179,7 +374,6 @@
 
 @end
 
-
 @implementation JSQMessagesToolbarContentView
 
 #pragma mark - Class methods
@@ -187,9 +381,6 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
         JSQMessagesToolbarContainerView *leftBarButtonContainerView = [JSQMessagesToolbarContainerView new];
-        [leftBarButtonContainerView setBorderColor:[UIColor lightGrayColor]
-                                             width:.7
-                                           rounded:YES];
         
         [self addSubview:leftBarButtonContainerView];
         [leftBarButtonContainerView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -220,9 +411,6 @@
         self.pttView = pttView;
         
         JSQMessagesToolbarContainerView *emojiBarButtonContainerView = [JSQMessagesToolbarContainerView new];
-        [emojiBarButtonContainerView setBorderColor:[UIColor lightGrayColor]
-                                              width:.7
-                                            rounded:YES];
         
         [self addSubview:emojiBarButtonContainerView];
         [emojiBarButtonContainerView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -233,9 +421,6 @@
         self.emojiBarButtonContainerView = emojiBarButtonContainerView;
         
         JSQMessagesToolbarContainerView *extraBarButtonContainerView = [JSQMessagesToolbarContainerView new];
-        [extraBarButtonContainerView setBorderColor:[UIColor lightGrayColor]
-                                              width:.7
-                                            rounded:YES];
         
         [self addSubview:extraBarButtonContainerView];
         [extraBarButtonContainerView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -245,6 +430,15 @@
             make.right.equalTo(self).inset(8);
         }];
         self.extraBarButtonContainerView = extraBarButtonContainerView;
+        
+        JSQMessagesToolbarExtraView *extraView = [JSQMessagesToolbarExtraView new];
+        extraView.hidden = YES;
+        [self addSubview:extraView];
+        [extraView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(leftBarButtonContainerView.mas_bottom);
+            make.left.right.bottom.equalTo(self);
+        }];
+        self.extraView = extraView;
         
         for (MASLayoutConstraint *constraint in [self constraints]) {
             if (constraint.firstItem == self.textView && constraint.firstAttribute == NSLayoutAttributeBottom) {
@@ -263,7 +457,14 @@
     self.leftBarButtonItem = [toolbarButtonFactory inputModeButtonItem:!textMode];
     
     if (!textMode) {
+        AVAudioSession *session = [AVAudioSession sharedInstance];
+        [session requestRecordPermission:^(BOOL granted) {
+        }];
+        
         [self.textView resignFirstResponder];
+    }
+    else {
+        [self.textView becomeFirstResponder];
     }
     
     self.textView.hidden = !textMode;

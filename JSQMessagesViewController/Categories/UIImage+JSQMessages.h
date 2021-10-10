@@ -98,6 +98,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (UIImage *)jsq_extraImage;
 
++ (UIImage *)jsq_voiceLeftSpeaking:(NSInteger)index;
+
++ (UIImage *)jsq_voiceRightSpeaking:(NSInteger)index;
+
 @end
 
 NS_ASSUME_NONNULL_END
