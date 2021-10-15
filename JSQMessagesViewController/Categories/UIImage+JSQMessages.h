@@ -102,6 +102,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (UIImage *)jsq_voiceRightSpeaking:(NSInteger)index;
 
++ (UIImage *)jsq_extraPhotoImage;
+
++ (UIImage *)jsq_extraCameraImage;
+
++ (UIImage *)jsq_extraContactImage;
+
++ (UIImage *)jsq_extraFileImage;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -55,9 +55,27 @@ typedef enum : NSUInteger {
     JSQToolbarExtraModeExtra,
 } JSQToolbarExtraMode;
 
+typedef NS_ENUM(NSUInteger, JSQMessagesToolbarExtraItems) {
+    JSQMessagesToolbarExtraItemPhoto,
+    JSQMessagesToolbarExtraItemCamera,
+    JSQMessagesToolbarExtraItemContact,
+    JSQMessagesToolbarExtraItemFile
+};
+
+@class JSQMessagesToolbarExtraView;
+
+@protocol JSQMessagesToolbarExtraViewDelegate <NSObject>
+
+- (void)extraView:(JSQMessagesToolbarExtraView *)extraView selectedEmoji:(NSString *)str;
+
+- (void)extraView:(JSQMessagesToolbarExtraView *)extraView selectedItem:(JSQMessagesToolbarExtraItems)extraItem;
+
+@end
+
 @interface JSQMessagesToolbarExtraView : UIView
 
 @property (nonatomic, assign) JSQToolbarExtraMode   mode;
+@property (nonatomic, weak)   id < JSQMessagesToolbarExtraViewDelegate >    delegate;
 
 @end
 

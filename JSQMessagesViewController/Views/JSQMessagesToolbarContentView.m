@@ -20,6 +20,7 @@
 #import "JSQMessagesToolbarButtonFactory.h"
 
 #import "UIView+JSQMessages.h"
+#import "UIImage+JSQMessages.h"
 #import <AVFAudio/AVAudioSession.h>
 
 
@@ -144,12 +145,14 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
         UILabel *label = [UILabel new];
-        label.font = [UIFont systemFontOfSize:27];
+        label.font = [UIFont systemFontOfSize:37];
         label.adjustsFontSizeToFitWidth = YES;
         label.text = @"😄";
         [CONTENT_VIEW addSubview:label];
         [label mas_makeConstraints:^(MASConstraintMaker *make) {
             make.center.equalTo(CONTENT_VIEW);
+            make.width.lessThanOrEqualTo(CONTENT_VIEW);
+            make.height.lessThanOrEqualTo(CONTENT_VIEW);
         }];
         self.label = label;
     }
@@ -160,13 +163,33 @@
 @end
 
 @interface JSQMessagesToolbarExtraCell : BaseCollectionViewCell
+
+@property (nonatomic, strong) UIImageView   *imageView;
+
 @end
 
 @implementation JSQMessagesToolbarExtraCell
 
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
-        self.backgroundColor = [UIColor lightGrayColor];
+        UIImage *image = [UIImage imageWithColor:[UIColor whiteColor]
+                                     borderColor:nil
+                                            size:CGSizeMake(32, 32)
+                                     rectCorners:UIRectCornerAllCorners
+                                     cornerRadii:CGSizeMake(8, 8)];
+        UIImageView *imageView = [[UIImageView alloc] initWithImage:[image stretchableImageWithLeftCapWidth:16 topCapHeight:16]];
+        self.backgroundView = imageView;
+        
+        image = [image jsq_imageMaskedWithColor:[UIColor lightGrayColor]];
+        imageView = [[UIImageView alloc] initWithImage:[image stretchableImageWithLeftCapWidth:16 topCapHeight:16]];
+        self.selectedBackgroundView = imageView;
+        
+        imageView = [UIImageView new];
+        [CONTENT_VIEW addSubview:imageView];
+        [imageView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.center.equalTo(CONTENT_VIEW);
+        }];
+        self.imageView = imageView;
     }
     
     return self;
@@ -192,7 +215,7 @@
         label.font = [UIFont systemFontOfSize:13];
         [self addSubview:label];
         [label mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.edges.equalTo(self).insets(UIEdgeInsetsMake(0, 15, 0, 15));
+            make.edges.equalTo(self).insets(UIEdgeInsetsMake(0, 15, 0, 0));
         }];
         self.label = label;
     }
@@ -205,6 +228,8 @@
 @interface JSQMessagesToolbarExtraView () < UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UICollectionViewDelegate >
 
 @property (nonatomic, strong) UICollectionView      *collectionView;
+
+@property (nonatomic, copy)   NSArray               *extraItems;
 
 @end
 
@@ -221,6 +246,8 @@
         collectionView.dataSource = self;
         collectionView.delegate = self;
         
+        collectionView.backgroundColor = [UIColor clearColor];
+        
         [collectionView registerClass:[JSQMessagesToolbarEmojiCell class]
            forCellWithReuseIdentifier:[JSQMessagesToolbarEmojiCell cellReuseIdentifier]];
         
@@ -236,6 +263,7 @@
             make.edges.equalTo(self);
         }];
         
+        self.extraItems = @[@(JSQMessagesToolbarExtraItemPhoto), @(JSQMessagesToolbarExtraItemCamera), @(JSQMessagesToolbarExtraItemFile)];
         self.collectionView = collectionView;
     }
     
@@ -251,16 +279,41 @@
 #pragma mark - UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UICollectionViewDelegate
 
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
-    return UIEdgeInsetsMake(0, 15, 15, 15);
-}
-
-- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
     switch (self.mode) {
         case JSQToolbarExtraModeEmoji:
-            return CGSizeMake(32, 32);
+            return UIEdgeInsetsMake(0, 15, 15, 15);
             
         case JSQToolbarExtraModeExtra:
-            return CGSizeMake(48, 48);
+            return UIEdgeInsetsMake(15, 15, 15, 15);
+            
+        default:
+            return UIEdgeInsetsZero;
+    }
+}
+
+- (CGSize)collectionView:(UICollectionView *)collectionView
+                  layout:(UICollectionViewLayout *)layout
+  sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
+    UIEdgeInsets insets = [self collectionView:collectionView
+                                        layout:layout
+                        insetForSectionAtIndex:indexPath.section];
+    
+    CGFloat width = CGRectGetWidth(collectionView.bounds) - (insets.left + insets.right);
+    
+    CGFloat interitemSpacing = [self collectionView:collectionView
+                                             layout:layout
+           minimumInteritemSpacingForSectionAtIndex:indexPath.section];
+    
+    switch (self.mode) {
+        case JSQToolbarExtraModeEmoji: {
+            width = (width - interitemSpacing * 7) / 8;
+            return CGSizeMake(width, width);
+        }
+            
+        case JSQToolbarExtraModeExtra: {
+            width = (width - interitemSpacing * 4) / 5;
+            return CGSizeMake(width, width);
+        }
             
         default:
             return CGSizeZero;
@@ -272,7 +325,12 @@
 }
 
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
-    return 8;
+    if (self.mode == JSQToolbarExtraModeEmoji) {
+        return 8;
+    }
+    else {
+        return 16;
+    }
 }
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
@@ -294,7 +352,7 @@
             return 48;
             
         case JSQToolbarExtraModeExtra:
-            return 8;
+            return self.extraItems.count;
             
         default:
             return 0;
@@ -302,7 +360,12 @@
 }
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section {
-    return CGSizeMake(120, 32);
+    if (self.mode == JSQToolbarExtraModeEmoji) {
+        return CGSizeMake(120, 32);
+    }
+    else {
+        return CGSizeZero;
+    }
 }
 
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
@@ -330,8 +393,50 @@
     }
 }
 
-- (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
+- (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(BaseCollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
+    if (self.mode == JSQToolbarExtraModeEmoji) {
+        
+    }
+    else if (self.mode == JSQToolbarExtraModeExtra) {
+        JSQMessagesToolbarExtraCell *ecell = (JSQMessagesToolbarExtraCell *)cell;
+        NSNumber *num = self.extraItems[indexPath.item];
+        
+        UIImage *image = nil;
+        switch (num.integerValue) {
+            case JSQMessagesToolbarExtraItemPhoto:
+                image = [UIImage jsq_extraPhotoImage];
+                break;
+                
+            case JSQMessagesToolbarExtraItemCamera:
+                image = [UIImage jsq_extraCameraImage];
+                break;
+                
+            case JSQMessagesToolbarExtraItemContact:
+                image = [UIImage jsq_extraContactImage];
+                break;
+                
+            case JSQMessagesToolbarExtraItemFile:
+                image = [UIImage jsq_extraFileImage];
+                break;
+                
+            default:
+                break;
+        }
+        
+        ecell.imageView.image = image;
+    }
+}
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    [collectionView deselectItemAtIndexPath:indexPath animated:YES];
     
+    if (self.mode == JSQToolbarExtraModeEmoji) {
+        
+    }
+    else if (self.mode == JSQToolbarExtraModeExtra) {
+        NSNumber *item = self.extraItems[indexPath.item];
+        [self.delegate extraView:self selectedItem:item.integerValue];
+    }
 }
 
 @end
@@ -435,7 +540,7 @@
         extraView.hidden = YES;
         [self addSubview:extraView];
         [extraView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(leftBarButtonContainerView.mas_bottom);
+            make.top.equalTo(leftBarButtonContainerView.mas_bottom).offset(8);
             make.left.right.bottom.equalTo(self);
         }];
         self.extraView = extraView;

@@ -162,6 +162,7 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
     [self.inputToolbar removeFromSuperview];
 
     self.inputToolbar.contentView.pttView.delegate = self;
+    self.inputToolbar.contentView.extraView.delegate = self;
     
     self.automaticallyScrollsToMostRecentMessage = YES;
 
@@ -965,8 +966,8 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
             self.inputToolbar.contentView.extraView.hidden = NO;
         }
         else if (self.showExtraPad) {
-            height += 280;
-            keyboardEndFrame.size.height -= 280;
+            height += 240;
+            keyboardEndFrame.size.height -= 240;
             self.inputToolbar.contentView.extraView.hidden = NO;
         }
         

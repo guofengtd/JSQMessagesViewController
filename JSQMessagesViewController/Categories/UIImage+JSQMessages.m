@@ -138,4 +138,20 @@
     return [UIImage jsq_bubbleImageFromBundleWithName:[NSString stringWithFormat:@"speaker_right_%d", index]];
 }
 
++ (UIImage *)jsq_extraPhotoImage {
+    return [UIImage jsq_bubbleImageFromBundleWithName:@"photo"];
+}
+
++ (UIImage *)jsq_extraCameraImage {
+    return [UIImage jsq_bubbleImageFromBundleWithName:@"camera"];
+}
+
++ (UIImage *)jsq_extraContactImage {
+    return [UIImage jsq_bubbleImageFromBundleWithName:@"contact"];
+}
+
++ (UIImage *)jsq_extraFileImage {
+    return [UIImage jsq_bubbleImageFromBundleWithName:@"file"];
+}
+
 @end
