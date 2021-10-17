@@ -44,6 +44,14 @@
     return self;
 }
 
+- (instancetype)initWithData:(NSData *)data maskAsOutgoing:(BOOL)maskAsOutgoing {
+    if (self = [super initWithMaskAsOutgoing:maskAsOutgoing]) {
+        self.image = [UIImage imageWithData:data];
+    }
+    
+    return self;
+}
+
 - (void)clearCachedMediaViews
 {
     [super clearCachedMediaViews];

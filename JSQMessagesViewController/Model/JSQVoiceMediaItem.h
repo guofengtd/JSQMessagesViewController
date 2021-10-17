@@ -42,11 +42,6 @@ didChangeAudioCategory:(NSString *)category
 @property (nonatomic, weak, nullable) id<JSQVoiceMediaItemDelegate> delegate;
 
 /**
- *  The view attributes to configure the appearance of the audio media view.
- */
-@property (nonatomic, strong, readonly) JSQAudioMediaViewAttributes *audioViewAttributes;
-
-/**
  *  A data object that contains an audio resource.
  */
 @property (nonatomic, strong, nullable) NSData *audioData;
@@ -66,8 +61,7 @@ didChangeAudioCategory:(NSString *)category
  */
 - (instancetype)initWithData:(nullable NSData *)audioData
                     duration:(CGFloat)duration
-              maskAsOutgoing:(BOOL)maskAsOutgoing
-         audioViewAttributes:(JSQAudioMediaViewAttributes *)audioViewAttributes NS_DESIGNATED_INITIALIZER;
+              maskAsOutgoing:(BOOL)maskAsOutgoing NS_DESIGNATED_INITIALIZER;
 
 /**
  *  Initializes and returns a default audio media item.
@@ -78,14 +72,6 @@ didChangeAudioCategory:(NSString *)category
  */
 - (instancetype)init;
 
-/**
- Initializes and returns a default audio media using the specified view attributes.
-
- @param audioViewAttributes The view attributes to configure the appearance of the audio media view.
-
- @return  An initialized `JSQVoiceMediaItem`.
- */
-- (instancetype)initWithAudioViewAttributes:(JSQAudioMediaViewAttributes *)audioViewAttributes;
 
 /**
  *  Initializes and returns an audio media item having the given audioData.

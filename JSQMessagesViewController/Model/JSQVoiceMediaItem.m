@@ -24,42 +24,21 @@
 
 - (instancetype)initWithData:(NSData *)audioData
                     duration:(CGFloat)duration
-              maskAsOutgoing:(BOOL)maskAsOutgoing
-         audioViewAttributes:(JSQAudioMediaViewAttributes *)audioViewAttributes
-{
-    NSParameterAssert(audioViewAttributes != nil);
+              maskAsOutgoing:(BOOL)maskAsOutgoing {
 
     if (self = [super initWithMaskAsOutgoing:maskAsOutgoing]) {
         _cachedMediaView = nil;
         _audioData = [audioData copy];
         _duration = duration;
-        _audioViewAttributes = audioViewAttributes;
     }
     
     return self;
 }
 
-- (instancetype)initWithData:(NSData *)audioData
-                    duration:(CGFloat)duration
-              maskAsOutgoing:(BOOL)maskAsOutgoing {
-    return [self initWithData:audioData
-                     duration:duration
-               maskAsOutgoing:maskAsOutgoing
-          audioViewAttributes:[[JSQAudioMediaViewAttributes alloc] init]];
-}
-
-- (instancetype)initWithAudioViewAttributes:(JSQAudioMediaViewAttributes *)audioViewAttributes {
-    return [self initWithData:nil
-                     duration:0
-               maskAsOutgoing:YES
-          audioViewAttributes:audioViewAttributes];
-}
-
 - (instancetype)init {
     return [self initWithData:nil
                      duration:0
-               maskAsOutgoing:YES
-          audioViewAttributes:[[JSQAudioMediaViewAttributes alloc] init]];
+               maskAsOutgoing:YES];
 }
 
 - (void)dealloc
@@ -123,52 +102,6 @@
     }
 }
 
-- (NSString *)timestampString:(NSTimeInterval)currentTime forDuration:(NSTimeInterval)duration
-{
-    // print the time as 0:ss or ss.x up to 59 seconds
-    // print the time as m:ss up to 59:59 seconds
-    // print the time as h:mm:ss for anything longer
-    if (duration < 60) {
-        if (self.audioViewAttributes.showFractionalSeconds) {
-            return [NSString stringWithFormat:@"%.01f", currentTime];
-        }
-        else if (currentTime < duration) {
-            return [NSString stringWithFormat:@"0:%02d", (int)round(currentTime)];
-        }
-        return [NSString stringWithFormat:@"0:%02d", (int)ceil(currentTime)];
-    }
-    else if (duration < 3600) {
-        return [NSString stringWithFormat:@"%d:%02d", (int)currentTime / 60, (int)currentTime % 60];
-    }
-
-    return [NSString stringWithFormat:@"%d:%02d:%02d", (int)currentTime / 3600, (int)currentTime / 60, (int)currentTime % 60];
-}
-
-- (void)onPlayButton:(UIButton *)sender
-{
-    NSString *category = [AVAudioSession sharedInstance].category;
-    AVAudioSessionCategoryOptions options = [AVAudioSession sharedInstance].categoryOptions;
-
-    if (category != self.audioViewAttributes.audioCategory || options != self.audioViewAttributes.audioCategoryOptions) {
-        NSError *error = nil;
-        [[AVAudioSession sharedInstance] setCategory:self.audioViewAttributes.audioCategory
-                                         withOptions:self.audioViewAttributes.audioCategoryOptions
-                                               error:&error];
-        if (self.delegate) {
-            [self.delegate audioMediaItem:self didChangeAudioCategory:category options:options error:error];
-        }
-    }
-
-    if (self.audioPlayer.playing) {
-        [self stopProgressTimer];
-        [self.audioPlayer stop];
-    }
-    else {
-        [self startProgressTimer];
-        [self.audioPlayer play];
-    }
-}
-
 #pragma mark - AVAudioPlayerDelegate
 
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player
@@ -193,10 +126,7 @@
     CGFloat width = 80 + 160 * self.duration / 60;
     width = MIN(240, width);
     
-    return CGSizeMake(width,
-                      self.audioViewAttributes.controlInsets.top +
-                      self.audioViewAttributes.controlInsets.bottom +
-                      self.audioViewAttributes.playButtonImage.size.height);
+    return CGSizeMake(width, 48);
 }
 
 - (UIView *)mediaView
@@ -205,12 +135,10 @@
         // reverse the insets based on the message direction
         CGFloat leftInset, rightInset;
         if (self.appliesMediaViewMaskAsOutgoing) {
-            leftInset = self.audioViewAttributes.controlInsets.left;
-            rightInset = self.audioViewAttributes.controlInsets.right;
+            
         }
         else {
-            leftInset = self.audioViewAttributes.controlInsets.right;
-            rightInset = self.audioViewAttributes.controlInsets.left;
+            
         }
         
         // create container view for the various controls
@@ -218,7 +146,7 @@
         JSQVoicePlayView *playView = [[JSQVoicePlayView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, size.width, size.height)
                                                                   isOutgoing:self.appliesMediaViewMaskAsOutgoing];
         
-        playView.backgroundColor = self.audioViewAttributes.backgroundColor;
+        playView.backgroundColor = self.appliesMediaViewMaskAsOutgoing?[UIColor colorFromHex:0xe6e6e6]:[UIColor colorFromHex:0x4dd463];
         [playView setAudioData:self.audioData
                       duration:self.duration];
         
@@ -288,8 +216,7 @@
 {
     JSQVoiceMediaItem *copy = [[[self class] allocWithZone:zone] initWithData:self.audioData
                                                                      duration:self.duration
-                                                               maskAsOutgoing:self.appliesMediaViewMaskAsOutgoing
-                                                          audioViewAttributes:self.audioViewAttributes];
+                                                               maskAsOutgoing:self.appliesMediaViewMaskAsOutgoing];
     
     copy.appliesMediaViewMaskAsOutgoing = self.appliesMediaViewMaskAsOutgoing;
     return copy;

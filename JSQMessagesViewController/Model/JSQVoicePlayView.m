@@ -30,7 +30,10 @@
 
 - (instancetype)initWithFrame:(CGRect)frame isOutgoing:(BOOL)isOutgoing {
     if (self = [super initWithFrame:frame]) {
-        UIImageView *imageView = [[UIImageView alloc] initWithImage:isOutgoing?[UIImage jsq_voiceRightSpeaking:1]:[UIImage jsq_voiceLeftSpeaking:1]];
+        UIColor *tintColor = isOutgoing?[UIColor darkGrayColor]:[UIColor whiteColor];
+        UIImage *image = isOutgoing?[UIImage jsq_voiceRightSpeaking:1]:[UIImage jsq_voiceLeftSpeaking:1];
+        UIImageView *imageView = [[UIImageView alloc] initWithImage:[image jsq_imageMaskedWithColor:tintColor]];
+        
         [self addSubview:imageView];
         [imageView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.centerY.equalTo(self);
@@ -44,8 +47,8 @@
         self.imageView = imageView;
         
         UILabel *label = [UILabel new];
-        label.font = [UIFont systemFontOfSize:15];
-        label.textColor = [UIColor colorFromHex:0x161616];
+        label.font = [UIFont monospacedDigitSystemFontOfSize:15 weight:UIFontWeightMedium];
+        label.textColor = tintColor;
         [self addSubview:label];
         [label mas_makeConstraints:^(MASConstraintMaker *make) {
             make.centerY.equalTo(self);

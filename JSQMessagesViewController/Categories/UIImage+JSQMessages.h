@@ -109,6 +109,9 @@ NS_ASSUME_NONNULL_BEGIN
 + (UIImage *)jsq_extraContactImage;
 
 + (UIImage *)jsq_extraFileImage;
+
++ (UIImage *)jsq_fileMediaImage;
+
 @end
 
 NS_ASSUME_NONNULL_END

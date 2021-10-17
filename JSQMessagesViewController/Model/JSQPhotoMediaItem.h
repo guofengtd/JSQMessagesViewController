@@ -46,6 +46,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (instancetype)initWithImage:(nullable UIImage *)image;
 
+- (instancetype)initWithData:(NSData *)data maskAsOutgoing:(BOOL)maskAsOutgoing;
+
 @end
 
 NS_ASSUME_NONNULL_END

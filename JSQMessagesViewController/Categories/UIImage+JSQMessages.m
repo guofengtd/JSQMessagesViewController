@@ -154,4 +154,8 @@
     return [UIImage jsq_bubbleImageFromBundleWithName:@"file"];
 }
 
++ (UIImage *)jsq_fileMediaImage {
+    return [UIImage jsq_bubbleImageFromBundleWithName:@"file_media"];
+}
+
 @end
