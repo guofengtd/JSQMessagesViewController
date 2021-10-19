@@ -70,6 +70,10 @@ typedef NS_ENUM(NSUInteger, JSQMessagesToolbarExtraItems) {
 
 - (void)extraView:(JSQMessagesToolbarExtraView *)extraView selectedItem:(JSQMessagesToolbarExtraItems)extraItem;
 
+- (void)deleteSelectedExtraView:(JSQMessagesToolbarExtraView *)extraView;
+
+- (void)sendSelectedExtraView:(JSQMessagesToolbarExtraView *)extraView;
+
 @end
 
 @interface JSQMessagesToolbarExtraView : UIView
@@ -87,6 +91,8 @@ typedef NS_ENUM(NSUInteger, JSQMessagesToolbarExtraItems) {
 @interface JSQMessagesToolbarContentView : UIView
 
 @property (nonatomic, assign) BOOL  textMode;
+
+- (void)setTextMode:(BOOL)textMode become:(BOOL)firstResponder;
 
 /**
  *  Returns the text view in which the user composes a message.

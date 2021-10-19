@@ -84,9 +84,13 @@ static void * kJSQMessagesInputToolbarKeyValueObservingContext = &kJSQMessagesIn
 }
 
 - (void)setTextMode:(BOOL)textMode {
+    [self setTextMode:textMode become:textMode?YES:NO];
+}
+
+- (void)setTextMode:(BOOL)textMode become:(BOOL)firstResponder {
     _textMode = textMode;
     
-    self.contentView.textMode = textMode;
+    [self.contentView setTextMode:textMode become:firstResponder];
 }
 
 #pragma mark - Setters

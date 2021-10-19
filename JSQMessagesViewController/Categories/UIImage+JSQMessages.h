@@ -112,6 +112,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (UIImage *)jsq_fileMediaImage;
 
++ (UIImage *)jsq_backspaceImage;
+
 @end
 
 NS_ASSUME_NONNULL_END

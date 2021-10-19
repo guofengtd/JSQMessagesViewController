@@ -73,6 +73,8 @@ typedef NS_ENUM(NSUInteger, JSQMessagesInputSendButtonLocation) {
 
 @property (nonatomic, assign) BOOL  textMode;
 
+- (void)setTextMode:(BOOL)textMode become:(BOOL)firstResponder;
+
 /**
  *  The object that acts as the delegate of the toolbar.
  */

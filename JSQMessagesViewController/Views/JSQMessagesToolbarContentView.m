@@ -225,11 +225,57 @@
 
 @end
 
+@interface JSQMessagesEmojiActionView : UIView
+
+@property (nonatomic, strong) UIButton  *btnDel;
+@property (nonatomic, strong) UIButton  *btnSend;
+
+@end
+
+@implementation JSQMessagesEmojiActionView
+
+- (instancetype)initWithFrame:(CGRect)frame {
+    if (self = [super initWithFrame:frame]) {
+        UIButton *btnDel = [UIButton buttonWithTitle:nil
+                                               color:nil
+                                     backgroundColor:[UIColor whiteColor]
+                                         borderColor:nil
+                                         cornerRadii:CGSizeMake(6, 6)];
+        
+        [btnDel setImage:[UIImage jsq_backspaceImage] forState:UIControlStateNormal];
+        [self addSubview:btnDel];
+        [btnDel mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.left.bottom.equalTo(self).inset(8);
+        }];
+        self.btnDel = btnDel;
+        
+        UIButton *btnSend = [UIButton buttonWithTitle:@"Send"
+                                                color:[UIColor whiteColor]
+                                      backgroundColor:[UIColor colorFromHex:0xa8e1ab]
+                                          borderColor:nil
+                                          cornerRadii:CGSizeMake(6, 6)];
+        
+        [self addSubview:btnSend];
+        [btnSend mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(btnDel.mas_right).offset(8);
+            make.top.right.bottom.equalTo(self).inset(8);
+            make.width.equalTo(btnDel.mas_width);
+            make.width.equalTo(@64);
+            make.height.equalTo(@42);
+        }];
+        self.btnSend = btnSend;
+    }
+    
+    return self;
+}
+@end
+
 @interface JSQMessagesToolbarExtraView () < UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UICollectionViewDelegate >
 
-@property (nonatomic, strong) UICollectionView      *collectionView;
+@property (nonatomic, strong) UICollectionView              *collectionView;
+@property (nonatomic, strong) JSQMessagesEmojiActionView    *emojiActionView;
 
-@property (nonatomic, copy)   NSArray               *extraItems;
+@property (nonatomic, copy)   NSArray                       *extraItems;
 
 @end
 
@@ -273,7 +319,34 @@
 - (void)setMode:(JSQToolbarExtraMode)mode {
     _mode = mode;
     
+    if (mode == JSQToolbarExtraModeEmoji && !self.emojiActionView) {
+        self.emojiActionView = [JSQMessagesEmojiActionView new];
+        [self addSubview:self.emojiActionView];
+        [self.emojiActionView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.right.equalTo(self).inset(15);
+            make.bottom.equalTo(self.mas_safeAreaLayoutGuideBottom);
+        }];
+        
+        [self.emojiActionView.btnDel addTarget:self
+                                        action:@selector(touchDel)
+                              forControlEvents:UIControlEventTouchUpInside];
+        
+        [self.emojiActionView.btnSend addTarget:self
+                                         action:@selector(touchSend)
+                               forControlEvents:UIControlEventTouchUpInside];
+    }
+    
+    self.emojiActionView.hidden = mode == JSQToolbarExtraModeExtra;
+    
     [self.collectionView reloadData];
+}
+
+- (void)touchDel {
+    [self.delegate deleteSelectedExtraView:self];
+}
+
+- (void)touchSend {
+    [self.delegate sendSelectedExtraView:self];
 }
 
 #pragma mark - UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UICollectionViewDelegate
@@ -281,7 +354,7 @@
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
     switch (self.mode) {
         case JSQToolbarExtraModeEmoji:
-            return UIEdgeInsetsMake(0, 15, 15, 15);
+            return UIEdgeInsetsMake(0, 15, 56, 15);
             
         case JSQToolbarExtraModeExtra:
             return UIEdgeInsetsMake(15, 15, 15, 15);
@@ -431,7 +504,7 @@
     [collectionView deselectItemAtIndexPath:indexPath animated:YES];
     
     if (self.mode == JSQToolbarExtraModeEmoji) {
-        
+        [self.delegate extraView:self selectedEmoji:@"😄"];
     }
     else if (self.mode == JSQToolbarExtraModeExtra) {
         NSNumber *item = self.extraItems[indexPath.item];
@@ -558,6 +631,10 @@
 }
 
 - (void)setTextMode:(BOOL)textMode {
+    [self setTextMode:textMode become:textMode?YES:NO];
+}
+
+- (void)setTextMode:(BOOL)textMode become:(BOOL)firstResponder {
     JSQMessagesToolbarButtonFactory *toolbarButtonFactory = [[JSQMessagesToolbarButtonFactory alloc] initWithFont:[UIFont preferredFontForTextStyle:UIFontTextStyleHeadline]];
     self.leftBarButtonItem = [toolbarButtonFactory inputModeButtonItem:!textMode];
     
@@ -565,11 +642,13 @@
         AVAudioSession *session = [AVAudioSession sharedInstance];
         [session requestRecordPermission:^(BOOL granted) {
         }];
-        
-        [self.textView resignFirstResponder];
+    }
+    
+    if (firstResponder) {
+        [self.textView becomeFirstResponder];
     }
     else {
-        [self.textView becomeFirstResponder];
+        [self.textView resignFirstResponder];
     }
     
     self.textView.hidden = !textMode;

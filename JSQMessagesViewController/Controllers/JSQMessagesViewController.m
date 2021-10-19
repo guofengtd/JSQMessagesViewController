@@ -305,13 +305,8 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
 
 #pragma mark - Messages view controller
 
-- (void)didPressSendButton:(UIButton *)button
-           withMessageText:(NSString *)text
-                  senderId:(NSString *)senderId
-         senderDisplayName:(NSString *)senderDisplayName
-                      date:(NSDate *)date
-{
-    NSAssert(NO, @"Error! required method not implemented in subclass. Need to implement %s", __PRETTY_FUNCTION__);
+- (void)sendText:(NSString *)text date:(NSDate *)date {
+    
 }
 
 - (void)finishSendingMessage
@@ -719,37 +714,40 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
 #pragma mark - Input toolbar delegate
 
 - (void)messagesInputToolbar:(JSQMessagesInputToolbar *)toolbar didPressLeftBarButton:(UIButton *)sender {
-    [self didPressSendButton:sender
-             withMessageText:[self jsq_currentlyComposedMessageText]
-                    senderId:[self.collectionView.dataSource senderId]
-           senderDisplayName:[self.collectionView.dataSource senderDisplayName]
-                        date:[NSDate date]];
+    self.showEmojiPad = NO;
+    self.showExtraPad = NO;
+    
+    toolbar.textMode = !toolbar.textMode;
+    
+    [self notifyInputPad];
 }
 
 - (void)messagesInputToolbar:(JSQMessagesInputToolbar *)toolbar didPressEmojiBarButton:(nonnull UIButton *)sender {
     self.showExtraPad = NO;
-    self.inputToolbar.contentView.extraView.mode = JSQToolbarExtraModeEmoji;
-    if (self.inputToolbar.textMode) {
+    toolbar.contentView.extraView.mode = JSQToolbarExtraModeEmoji;
+    if (!toolbar.textMode) {
         self.showEmojiPad = YES;
-        self.inputToolbar.textMode = NO;
+        [toolbar setTextMode:YES become:NO];
     }
     else {
         self.showEmojiPad = !self.showEmojiPad;
     }
+    [toolbar.contentView.textView resignFirstResponder];
     
     [self notifyInputPad];
 }
 
 - (void)messagesInputToolbar:(JSQMessagesInputToolbar *)toolbar didPressExtraBarButton:(nonnull UIButton *)sender {
     self.showEmojiPad = NO;
-    self.inputToolbar.contentView.extraView.mode = JSQToolbarExtraModeExtra;
-    if (self.inputToolbar.textMode) {
+    toolbar.contentView.extraView.mode = JSQToolbarExtraModeExtra;
+    if (!toolbar.textMode) {
         self.showExtraPad = YES;
-        self.inputToolbar.textMode = NO;
+        [toolbar.contentView setTextMode:YES become:NO];
     }
     else {
         self.showExtraPad = !self.showExtraPad;
     }
+    [toolbar.contentView.textView resignFirstResponder];
     
     [self notifyInputPad];
 }
@@ -796,7 +794,11 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
     }
 
     [textView becomeFirstResponder];
-
+    
+    self.showEmojiPad = NO;
+    self.showExtraPad = NO;
+    [self notifyInputPad];
+    
     if (self.automaticallyScrollsToMostRecentMessage) {
         [self scrollToBottomAnimated:YES];
     }
@@ -804,11 +806,7 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
     if ([text isEqualToString:@"\n"]) {
-        [self didPressSendButton:nil
-                 withMessageText:textView.text
-                        senderId:self.senderId
-               senderDisplayName:self.senderDisplayName
-                            date:[NSDate date]];
+        [self sendText:textView.text date:[NSDate date]];
         return FALSE;
     }
     

@@ -158,4 +158,9 @@
     return [UIImage jsq_bubbleImageFromBundleWithName:@"file_media"];
 }
 
++ (UIImage *)jsq_backspaceImage
+{
+    return [UIImage jsq_bubbleImageFromBundleWithName:@"backspace"];
+}
+
 @end
