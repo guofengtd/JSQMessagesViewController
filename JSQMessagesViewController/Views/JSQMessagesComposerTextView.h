@@ -22,6 +22,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+extern NSNotificationName  JSQMessagesComposerTextViewWillBecomeFirstResponder;
+
 /**
  *  A delegate object used to notify the receiver of paste events from a `JSQMessagesComposerTextView`.
  */

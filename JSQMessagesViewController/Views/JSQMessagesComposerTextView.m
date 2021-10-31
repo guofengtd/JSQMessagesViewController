@@ -22,6 +22,8 @@
 
 #import "NSString+JSQMessages.h"
 
+NSNotificationName  JSQMessagesComposerTextViewWillBecomeFirstResponder = @"JSQMessagesComposerTextViewWillBecomeFirstResponder";
+
 @interface JSQMessagesComposerTextView ()
 
 @property (nonatomic, weak) NSLayoutConstraint *heightConstraint;
@@ -261,6 +263,12 @@
 
 - (BOOL)becomeFirstResponder
 {
+    if ([self canBecomeFirstResponder]) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:JSQMessagesComposerTextViewWillBecomeFirstResponder
+                                                            object:self
+                                                          userInfo:nil];
+    }
+    
     return [super becomeFirstResponder];
 }
 

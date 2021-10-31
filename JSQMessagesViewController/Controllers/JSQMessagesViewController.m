@@ -714,39 +714,42 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
 #pragma mark - Input toolbar delegate
 
 - (void)messagesInputToolbar:(JSQMessagesInputToolbar *)toolbar didPressLeftBarButton:(UIButton *)sender {
+    if (self.showEmojiPad || self.showExtraPad) {
+        toolbar.textMode = NO;
+    }
+    else {
+        toolbar.textMode = !toolbar.textMode;
+    }
+    
     self.showEmojiPad = NO;
     self.showExtraPad = NO;
     
-    toolbar.textMode = !toolbar.textMode;
-    
-    [self notifyInputPad];
+    if (!toolbar.textMode) {
+        [self notifyInputPad];
+    }
 }
 
 - (void)messagesInputToolbar:(JSQMessagesInputToolbar *)toolbar didPressEmojiBarButton:(nonnull UIButton *)sender {
-    self.showExtraPad = NO;
     toolbar.contentView.extraView.mode = JSQToolbarExtraModeEmoji;
-    if (!toolbar.textMode) {
-        self.showEmojiPad = YES;
-        [toolbar setTextMode:YES become:NO];
-    }
-    else {
-        self.showEmojiPad = !self.showEmojiPad;
-    }
+    
+    self.showEmojiPad = YES;
+    self.showExtraPad = NO;
+    
+    [toolbar setTextMode:YES become:NO];
+    
     [toolbar.contentView.textView resignFirstResponder];
     
     [self notifyInputPad];
 }
 
 - (void)messagesInputToolbar:(JSQMessagesInputToolbar *)toolbar didPressExtraBarButton:(nonnull UIButton *)sender {
-    self.showEmojiPad = NO;
     toolbar.contentView.extraView.mode = JSQToolbarExtraModeExtra;
-    if (!toolbar.textMode) {
-        self.showExtraPad = YES;
-        [toolbar.contentView setTextMode:YES become:NO];
-    }
-    else {
-        self.showExtraPad = !self.showExtraPad;
-    }
+    
+    self.showEmojiPad = NO;
+    self.showExtraPad = YES;
+    
+    [toolbar.contentView setTextMode:YES become:NO];
+    
     [toolbar.contentView.textView resignFirstResponder];
     
     [self notifyInputPad];
@@ -792,12 +795,6 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
     if (textView != self.inputToolbar.contentView.textView) {
         return;
     }
-
-    [textView becomeFirstResponder];
-    
-    self.showEmojiPad = NO;
-    self.showExtraPad = NO;
-    [self notifyInputPad];
     
     if (self.automaticallyScrollsToMostRecentMessage) {
         [self scrollToBottomAnimated:YES];
@@ -905,6 +902,11 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     if (registerForNotifications) {
         [center addObserver:self
+                   selector:@selector(jsq_willBecomeFirstResponder:)
+                       name:JSQMessagesComposerTextViewWillBecomeFirstResponder
+                     object:self.inputToolbar.contentView.textView];
+        
+        [center addObserver:self
                    selector:@selector(jsq_didReceiveKeyboardWillChangeFrameNotification:)
                        name:UIKeyboardWillChangeFrameNotification
                      object:nil];
@@ -926,6 +928,10 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
     }
     else {
         [center removeObserver:self
+                          name:JSQMessagesComposerTextViewWillBecomeFirstResponder
+                        object:nil];
+        
+        [center removeObserver:self
                           name:UIKeyboardWillChangeFrameNotification
                         object:nil];
 
@@ -943,8 +949,12 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
     }
 }
 
-- (void)jsq_didReceiveKeyboardWillChangeFrameNotification:(NSNotification *)notification
-{
+- (void)jsq_willBecomeFirstResponder:(NSNotification *)notification {
+    self.showEmojiPad = NO;
+    self.showExtraPad = NO;
+}
+
+- (void)jsq_didReceiveKeyboardWillChangeFrameNotification:(NSNotification *)notification {
     NSDictionary *userInfo = [notification userInfo];
 
     CGRect keyboardEndFrame = [userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
@@ -960,15 +970,14 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
         CGFloat height = 42;
         if (self.showEmojiPad) {
             height += 320;
-            keyboardEndFrame.size.height -= 320;
             self.inputToolbar.contentView.extraView.hidden = NO;
         }
         else if (self.showExtraPad) {
             height += 240;
-            keyboardEndFrame.size.height -= 240;
             self.inputToolbar.contentView.extraView.hidden = NO;
         }
         
+        keyboardEndFrame.size.height = height;
         self.inputToolbar.contentView.leftBarButtonContainerBottomPadding = height;
     }
     
@@ -997,7 +1006,7 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
     if (self.showEmojiPad || self.showExtraPad) {
         self.showEmojiPad = self.showExtraPad = NO;
-        
+
         [self notifyInputPad];
     }
 }

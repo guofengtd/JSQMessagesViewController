@@ -275,6 +275,7 @@
 @property (nonatomic, strong) UICollectionView              *collectionView;
 @property (nonatomic, strong) JSQMessagesEmojiActionView    *emojiActionView;
 
+@property (nonatomic, copy)   NSString                      *emojiItems;
 @property (nonatomic, copy)   NSArray                       *extraItems;
 
 @end
@@ -308,6 +309,8 @@
         [collectionView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.edges.equalTo(self);
         }];
+        
+        self.emojiItems = @"😀😁🤣😂😄😅😆😇😉😊🙂🙃☺️😋😌😍😘😙😜😝🤑🤓😎🤗🤡🤠😏😶😑😒🙄🤔😳😞😟😠😡😔😕☹️😣😖😫😤😮😱😨😰😯😦😢😥😪😓🤤😭😲🤥🤢🤧🤐😷🤒🤕😴💤💩😈👹👺💀👻👽🤖👏👋👍👎👊🤞🤝✌️👌✋💪🙏☝️👆👇👈👉🖐🤘✍️💅👄👅👂👃👁👀🗣";
         
         self.extraItems = @[@(JSQMessagesToolbarExtraItemPhoto), @(JSQMessagesToolbarExtraItemCamera), @(JSQMessagesToolbarExtraItemFile)];
         self.collectionView = collectionView;
@@ -380,12 +383,12 @@
     switch (self.mode) {
         case JSQToolbarExtraModeEmoji: {
             width = (width - interitemSpacing * 7) / 8;
-            return CGSizeMake(width, width);
+            return CGSizeMake((int)width, width);
         }
             
         case JSQToolbarExtraModeExtra: {
             width = (width - interitemSpacing * 4) / 5;
-            return CGSizeMake(width, width);
+            return CGSizeMake((int)width, width);
         }
             
         default:
@@ -409,7 +412,7 @@
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
     switch (self.mode) {
         case JSQToolbarExtraModeEmoji:
-            return 2;
+            return 1;
             
         case JSQToolbarExtraModeExtra:
             return 1;
@@ -422,7 +425,7 @@
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
     switch (self.mode) {
         case JSQToolbarExtraModeEmoji:
-            return 48;
+            return self.emojiItems.length;
             
         case JSQToolbarExtraModeExtra:
             return self.extraItems.count;
@@ -468,7 +471,8 @@
 
 - (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(BaseCollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
     if (self.mode == JSQToolbarExtraModeEmoji) {
-        
+        JSQMessagesToolbarEmojiCell *ecell = (JSQMessagesToolbarEmojiCell *)cell;
+        ecell.label.text = [self.emojiItems substringWithRange:[self.emojiItems rangeOfComposedCharacterSequenceAtIndex:indexPath.item]];
     }
     else if (self.mode == JSQToolbarExtraModeExtra) {
         JSQMessagesToolbarExtraCell *ecell = (JSQMessagesToolbarExtraCell *)cell;
@@ -504,7 +508,8 @@
     [collectionView deselectItemAtIndexPath:indexPath animated:YES];
     
     if (self.mode == JSQToolbarExtraModeEmoji) {
-        [self.delegate extraView:self selectedEmoji:@"😄"];
+        NSString *str = [self.emojiItems substringWithRange:[self.emojiItems rangeOfComposedCharacterSequenceAtIndex:indexPath.item]];
+        [self.delegate extraView:self selectedEmoji:str];
     }
     else if (self.mode == JSQToolbarExtraModeExtra) {
         NSNumber *item = self.extraItems[indexPath.item];
@@ -613,7 +618,8 @@
         extraView.hidden = YES;
         [self addSubview:extraView];
         [extraView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(leftBarButtonContainerView.mas_bottom).offset(8);
+            make.top.greaterThanOrEqualTo(leftBarButtonContainerView.mas_bottom).offset(8);
+            make.top.greaterThanOrEqualTo(textView.mas_bottom).offset(8);
             make.left.right.bottom.equalTo(self);
         }];
         self.extraView = extraView;
