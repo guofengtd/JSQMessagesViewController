@@ -41,6 +41,7 @@ static NSMutableSet *jsqMessagesCollectionViewCellActions = nil;
 
 @property (weak, nonatomic) IBOutlet UIImageView *avatarImageView;
 @property (weak, nonatomic) IBOutlet UIView *avatarContainerView;
+@property (weak, nonatomic) IBOutlet UIView *statusContainerView;
 
 @property (weak, nonatomic) IBOutlet UIButton *accessoryButton;
 
@@ -308,6 +309,7 @@ static NSMutableSet *jsqMessagesCollectionViewCellActions = nil;
 
     self.messageBubbleContainerView.backgroundColor = backgroundColor;
     self.avatarContainerView.backgroundColor = backgroundColor;
+    self.statusContainerView.backgroundColor = backgroundColor;
 }
 
 - (void)setAvatarViewSize:(CGSize)avatarViewSize

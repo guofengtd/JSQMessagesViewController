@@ -593,22 +593,22 @@
         }];
         self.pttView = pttView;
         
-        JSQMessagesToolbarContainerView *emojiBarButtonContainerView = [JSQMessagesToolbarContainerView new];
-        
-        [self addSubview:emojiBarButtonContainerView];
-        [emojiBarButtonContainerView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.bottom.equalTo(leftBarButtonContainerView);
-            make.left.equalTo(textView.mas_right).offset(8);
-            make.width.equalTo(leftBarButtonContainerView);
-        }];
-        self.emojiBarButtonContainerView = emojiBarButtonContainerView;
+//        JSQMessagesToolbarContainerView *emojiBarButtonContainerView = [JSQMessagesToolbarContainerView new];
+//
+//        [self addSubview:emojiBarButtonContainerView];
+//        [emojiBarButtonContainerView mas_makeConstraints:^(MASConstraintMaker *make) {
+//            make.top.bottom.equalTo(leftBarButtonContainerView);
+//            make.left.equalTo(textView.mas_right).offset(8);
+//            make.width.equalTo(leftBarButtonContainerView);
+//        }];
+//        self.emojiBarButtonContainerView = emojiBarButtonContainerView;
         
         JSQMessagesToolbarContainerView *extraBarButtonContainerView = [JSQMessagesToolbarContainerView new];
         
         [self addSubview:extraBarButtonContainerView];
         [extraBarButtonContainerView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.top.bottom.equalTo(leftBarButtonContainerView);
-            make.left.equalTo(emojiBarButtonContainerView.mas_right).offset(8);
+            make.left.equalTo(textView.mas_right).offset(8);
             make.width.equalTo(leftBarButtonContainerView);
             make.right.equalTo(self).inset(8);
         }];

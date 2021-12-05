@@ -246,13 +246,6 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
     }
     [self.view layoutIfNeeded];
     [self.collectionView.collectionViewLayout invalidateLayout];
-
-    if (self.automaticallyScrollsToMostRecentMessage) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self scrollToBottomAnimated:NO];
-            [self.collectionView.collectionViewLayout invalidateLayoutWithContext:[JSQMessagesCollectionViewFlowLayoutInvalidationContext context]];
-        });
-    }
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -753,6 +746,10 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
     [toolbar.contentView.textView resignFirstResponder];
     
     [self notifyInputPad];
+    
+    if (self.automaticallyScrollsToMostRecentMessage) {
+        [self scrollToBottomAnimated:YES];
+    }
 }
 
 - (void)notifyInputPad {
@@ -977,7 +974,7 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
             self.inputToolbar.contentView.extraView.hidden = NO;
         }
         
-        keyboardEndFrame.size.height = height;
+        keyboardEndFrame.size.height = height + 40;
         self.inputToolbar.contentView.leftBarButtonContainerBottomPadding = height;
     }
     

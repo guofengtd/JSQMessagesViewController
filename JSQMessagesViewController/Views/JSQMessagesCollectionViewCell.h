@@ -150,6 +150,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  Returns the avatar image view of the cell that is responsible for displaying avatar images.
  */
 @property (weak, nonatomic, readonly, nullable) UIImageView *avatarImageView;
+@property (weak, nonatomic, readonly, nullable) UIImageView *statusImageView;
 
 /**
  *  Returns the avatar container view of the cell. This view is the superview of the cell's avatarImageView.
@@ -162,6 +163,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  Doing so could result in unexpected behavior.
  */
 @property (weak, nonatomic, readonly, nullable) UIView *avatarContainerView;
+@property (weak, nonatomic, readonly, nullable) UIView *statusContainerView;
 
 /**
  *  Returns the accessory button of the cell.
