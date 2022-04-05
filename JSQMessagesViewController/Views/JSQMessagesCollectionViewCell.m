@@ -64,6 +64,7 @@ static NSMutableSet *jsqMessagesCollectionViewCellActions = nil;
 @property (assign, nonatomic) CGSize avatarViewSize;
 
 @property (weak, nonatomic, readwrite) UITapGestureRecognizer *tapGestureRecognizer;
+@property (weak, nonatomic, readwrite) UILongPressGestureRecognizer *longPressGestureRecognizer;
 
 - (void)jsq_handleTapGesture:(UITapGestureRecognizer *)tap;
 
@@ -141,8 +142,14 @@ static NSMutableSet *jsqMessagesCollectionViewCellActions = nil;
     self.cellBottomLabelHeightConstraint.constant = bottomLabelFont.pointSize;
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(jsq_handleTapGesture:)];
+    tap.delegate = self;
     [self addGestureRecognizer:tap];
     self.tapGestureRecognizer = tap;
+    
+    UILongPressGestureRecognizer *press = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(jsq_handleLongPressGesture:)];
+    press.delegate = self;
+    [self addGestureRecognizer:press];
+    self.longPressGestureRecognizer = press;
 }
 
 - (void)configureAccessoryButton
@@ -167,7 +174,9 @@ static NSMutableSet *jsqMessagesCollectionViewCellActions = nil;
     _avatarImageView = nil;
 
     [_tapGestureRecognizer removeTarget:nil action:NULL];
+    [_longPressGestureRecognizer removeTarget:nil action:NULL];
     _tapGestureRecognizer = nil;
+    _longPressGestureRecognizer = nil;
 }
 
 #pragma mark - Collection view cell
@@ -180,7 +189,7 @@ static NSMutableSet *jsqMessagesCollectionViewCellActions = nil;
     self.messageBubbleTopLabel.text = nil;
     self.cellBottomLabel.text = nil;
 
-    self.textView.dataDetectorTypes = UIDataDetectorTypeNone;
+    self.textView.dataDetectorTypes = UIDataDetectorTypeLink | UIDataDetectorTypePhoneNumber;
     self.textView.text = nil;
     self.textView.attributedText = nil;
 
@@ -402,15 +411,22 @@ static NSMutableSet *jsqMessagesCollectionViewCellActions = nil;
     }
 }
 
+- (void)jsq_handleLongPressGesture:(UILongPressGestureRecognizer *)press {
+    CGPoint touchPt = [press locationInView:self];
+    if (press.state == UIGestureRecognizerStateBegan && CGRectContainsPoint(self.messageBubbleContainerView.frame, touchPt)) {
+        [self.delegate messagesCollectionViewCellLongPressMessageBubble:self];
+    }
+}
+
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
 {
     CGPoint touchPt = [touch locationInView:self];
-
+    
     if ([gestureRecognizer isKindOfClass:[UILongPressGestureRecognizer class]]) {
         return CGRectContainsPoint(self.messageBubbleContainerView.frame, touchPt);
     }
     
-    return NO;
+    return CGRectContainsPoint(self.messageBubbleContainerView.frame, touchPt);
 }
 
 - (IBAction)didTapAccessoryButton:(UIButton *)accessoryButton

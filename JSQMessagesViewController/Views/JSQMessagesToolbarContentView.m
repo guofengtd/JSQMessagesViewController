@@ -352,6 +352,10 @@
     [self.delegate sendSelectedExtraView:self];
 }
 
+- (void)setBounds:(CGRect)bounds {
+    [super setBounds:bounds];
+}
+
 #pragma mark - UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UICollectionViewDelegate
 
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
@@ -579,7 +583,10 @@
             make.height.greaterThanOrEqualTo(@32);
             make.height.equalTo(@32);
             make.height.lessThanOrEqualTo(@150);
-            make.left.equalTo(leftBarButtonContainerView.mas_right).offset(8);
+            make.left.greaterThanOrEqualTo(self).inset(8);
+            make.left.greaterThanOrEqualTo(leftBarButtonContainerView.mas_right).offset(8);
+            make.right.lessThanOrEqualTo(self).inset(8);
+            make.width.equalTo(@1000);
         }];
         
         [textView awakeFromNib];
@@ -621,6 +628,7 @@
             make.top.greaterThanOrEqualTo(leftBarButtonContainerView.mas_bottom).offset(8);
             make.top.greaterThanOrEqualTo(textView.mas_bottom).offset(8);
             make.left.right.bottom.equalTo(self);
+            make.height.equalTo(@1000);
         }];
         self.extraView = extraView;
         

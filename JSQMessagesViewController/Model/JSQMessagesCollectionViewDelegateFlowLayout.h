@@ -96,6 +96,10 @@ NS_ASSUME_NONNULL_BEGIN
      didTapMessageCell:(JSQMessagesCollectionViewCell *)cell
      bubbleAtIndexPath:(NSIndexPath *)indexPath;
 
+- (void)collectionView:(JSQMessagesCollectionView *)collectionView
+  longPressMessageCell:(JSQMessagesCollectionViewCell *)cell
+     bubbleAtIndexPath:(NSIndexPath *)indexPath;
+
 /**
  *  Notifies the delegate that the cell at the specified indexPath did receive a tap event at the specified touchLocation.
  *

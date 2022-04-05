@@ -283,6 +283,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)viewDidDisappear:(BOOL)animated NS_REQUIRES_SUPER;
 
+@property (strong, nonatomic) NSIndexPath *selectedIndexPathForMenu;
+
 /**
  Called when `UIMenuControllerWillShowMenuNotification` is posted.
 

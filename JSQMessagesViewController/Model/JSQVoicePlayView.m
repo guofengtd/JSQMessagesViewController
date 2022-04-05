@@ -81,6 +81,14 @@
         self.audioPlayer.delegate = self;
     }
     
+    AVAudioSession *session = [AVAudioSession sharedInstance];
+    [session setCategory:AVAudioSessionCategoryPlayAndRecord
+             withOptions:AVAudioSessionCategoryOptionDefaultToSpeaker error: nil];
+    
+    [session setActive:YES
+           withOptions:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation
+                 error:nil];
+    
     self.audioPlayer.currentTime = 0;
     [self.audioPlayer play];
     
@@ -108,7 +116,8 @@
 
 - (void)updateDuration {
     if ([self.audioPlayer isPlaying]) {
-        self.labelView.text = [NSString stringWithFormat:@"%.0f\"", self.duration - self.audioPlayer.currentTime];
+        CGFloat interval = self.duration - self.audioPlayer.currentTime;
+        self.labelView.text = [NSString stringWithFormat:@"%.0f\"", MAX(interval, 0)];
     }
     else {
         self.labelView.text = [NSString stringWithFormat:@"%.0f\"", self.duration];

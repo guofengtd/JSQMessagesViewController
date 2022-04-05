@@ -115,8 +115,6 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
 
 @property (nonatomic) NSLayoutConstraint *toolbarHeightConstraint;
 
-@property (strong, nonatomic) NSIndexPath *selectedIndexPathForMenu;
-
 @end
 
 
@@ -700,6 +698,10 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
     
 }
 
+- (void)collectionView:(JSQMessagesCollectionView *)collectionView longPressMessageCell:(JSQMessagesCollectionViewCell *)cell bubbleAtIndexPath:(NSIndexPath *)indexPath {
+    self.selectedIndexPathForMenu = indexPath;
+}
+
 - (void)collectionView:(JSQMessagesCollectionView *)collectionView
  didTapCellAtIndexPath:(NSIndexPath *)indexPath
          touchLocation:(CGPoint)touchLocation { }
@@ -852,14 +854,6 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
 
 - (void)didReceiveMenuWillHideNotification:(NSNotification *)notification
 {
-    if (!self.selectedIndexPathForMenu) {
-        return;
-    }
-
-    //  per comment above in 'shouldShowMenuForItemAtIndexPath:'
-    //  re-enable 'selectable', thus re-enabling data detectors if present
-    JSQMessagesCollectionViewCell *selectedCell = (JSQMessagesCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.selectedIndexPathForMenu];
-    selectedCell.textView.selectable = YES;
     self.selectedIndexPathForMenu = nil;
 }
 
@@ -960,7 +954,7 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
     
     self.inputToolbar.contentView.extraView.hidden = YES;
     
-    if (!self.showEmojiPad &&!self.showExtraPad && CGRectGetHeight(rect) > 100 || self.view.safeAreaInsets.bottom == 0) {
+    if (!self.showEmojiPad &&!self.showExtraPad && (CGRectGetHeight(rect) > 100 || self.view.safeAreaInsets.bottom == 0)) {
         self.inputToolbar.contentView.leftBarButtonContainerBottomPadding = 8;
     }
     else {

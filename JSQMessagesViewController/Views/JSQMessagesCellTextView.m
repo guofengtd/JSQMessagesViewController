@@ -63,6 +63,10 @@
             return NO;
         }
     }
+    else if ([gestureRecognizer isKindOfClass:[UILongPressGestureRecognizer class]]
+             && ![gestureRecognizer.view isKindOfClass:[UICollectionViewCell class]]) {
+        return NO;
+    }
     
     return YES;
 }

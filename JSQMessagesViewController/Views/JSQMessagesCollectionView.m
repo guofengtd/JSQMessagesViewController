@@ -161,6 +161,17 @@ forSupplementaryViewOfKind:UICollectionElementKindSectionHeader
                 bubbleAtIndexPath:indexPath];
 }
 
+- (void)messagesCollectionViewCellLongPressMessageBubble:(JSQMessagesCollectionViewCell *)cell {
+    NSIndexPath *indexPath = [self indexPathForCell:cell];
+    if (indexPath == nil) {
+        return;
+    }
+
+    [self.delegate collectionView:self
+             longPressMessageCell:cell
+                bubbleAtIndexPath:indexPath];
+}
+
 - (void)messagesCollectionViewCellDidTapCell:(JSQMessagesCollectionViewCell *)cell atPosition:(CGPoint)position
 {
     NSIndexPath *indexPath = [self indexPathForCell:cell];

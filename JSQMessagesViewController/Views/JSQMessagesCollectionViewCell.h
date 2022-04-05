@@ -47,6 +47,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)messagesCollectionViewCellDidTapMessageBubble:(JSQMessagesCollectionViewCell *)cell;
 
+- (void)messagesCollectionViewCellLongPressMessageBubble:(JSQMessagesCollectionViewCell *)cell;
+
 /**
  *  Tells the delegate that the cell has been tapped at the point specified by position.
  *
