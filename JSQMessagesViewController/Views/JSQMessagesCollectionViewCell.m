@@ -406,6 +406,9 @@ static NSMutableSet *jsqMessagesCollectionViewCellActions = nil;
     else if (CGRectContainsPoint(self.messageBubbleContainerView.frame, touchPt)) {
         [self.delegate messagesCollectionViewCellDidTapMessageBubble:self];
     }
+    else if (CGRectContainsPoint(self.statusContainerView.frame, touchPt)) {
+        [self.delegate messagesCollectionViewCellDidTapStatus:self];
+    }
     else {
         [self.delegate messagesCollectionViewCellDidTapCell:self atPosition:touchPt];
     }
@@ -426,7 +429,7 @@ static NSMutableSet *jsqMessagesCollectionViewCellActions = nil;
         return CGRectContainsPoint(self.messageBubbleContainerView.frame, touchPt);
     }
     
-    return CGRectContainsPoint(self.messageBubbleContainerView.frame, touchPt);
+    return CGRectContainsPoint(self.messageBubbleContainerView.frame, touchPt) || CGRectContainsPoint(self.statusContainerView.frame, touchPt);
 }
 
 - (IBAction)didTapAccessoryButton:(UIButton *)accessoryButton

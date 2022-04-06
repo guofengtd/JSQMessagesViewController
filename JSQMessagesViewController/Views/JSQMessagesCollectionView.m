@@ -149,6 +149,17 @@ forSupplementaryViewOfKind:UICollectionElementKindSectionHeader
                       atIndexPath:indexPath];
 }
 
+- (void)messagesCollectionViewCellDidTapStatus:(JSQMessagesCollectionViewCell *)cell {
+    NSIndexPath *indexPath = [self indexPathForCell:cell];
+    if (indexPath == nil) {
+        return;
+    }
+
+    [self.delegate collectionView:self
+            didTapStatusImageView:cell.avatarImageView
+                      atIndexPath:indexPath];
+}
+
 - (void)messagesCollectionViewCellDidTapMessageBubble:(JSQMessagesCollectionViewCell *)cell
 {
     NSIndexPath *indexPath = [self indexPathForCell:cell];

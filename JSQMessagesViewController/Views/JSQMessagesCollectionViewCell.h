@@ -40,6 +40,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)messagesCollectionViewCellDidTapAvatar:(JSQMessagesCollectionViewCell *)cell;
 
+- (void)messagesCollectionViewCellDidTapStatus:(JSQMessagesCollectionViewCell *)cell;
+
 /**
  *  Tells the delegate that the message bubble of the cell has been tapped.
  *

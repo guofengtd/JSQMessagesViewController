@@ -694,6 +694,10 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
  didTapAvatarImageView:(UIImageView *)avatarImageView
            atIndexPath:(NSIndexPath *)indexPath { }
 
+- (void)collectionView:(JSQMessagesCollectionView *)collectionView
+ didTapStatusImageView:(UIImageView *)avatarImageView
+           atIndexPath:(NSIndexPath *)indexPath { }
+
 - (void)collectionView:(JSQMessagesCollectionView *)collectionView didTapMessageCell:(nonnull JSQMessagesCollectionViewCell *)cell bubbleAtIndexPath:(nonnull NSIndexPath *)indexPath {
     
 }

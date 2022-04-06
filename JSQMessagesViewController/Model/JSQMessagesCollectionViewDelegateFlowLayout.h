@@ -86,6 +86,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)collectionView:(JSQMessagesCollectionView *)collectionView didTapAvatarImageView:(UIImageView *)avatarImageView atIndexPath:(NSIndexPath *)indexPath;
 
+- (void)collectionView:(JSQMessagesCollectionView *)collectionView didTapStatusImageView:(UIImageView *)statusImageView atIndexPath:(NSIndexPath *)indexPath;
+
 /**
  *  Notifies the delegate that the message bubble at the specified indexPath did receive a tap event.
  *
