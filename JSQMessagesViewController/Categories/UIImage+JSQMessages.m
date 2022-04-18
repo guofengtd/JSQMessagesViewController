@@ -163,4 +163,9 @@
     return [UIImage jsq_bubbleImageFromBundleWithName:@"backspace"];
 }
 
++ (UIImage *)jsq_arrowUpImage
+{
+    return [UIImage jsq_bubbleImageFromBundleWithName:@"arrow_up"];
+}
+
 @end

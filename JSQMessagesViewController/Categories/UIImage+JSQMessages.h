@@ -114,6 +114,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (UIImage *)jsq_backspaceImage;
 
++ (UIImage *)jsq_arrowUpImage;
+
 @end
 
 NS_ASSUME_NONNULL_END

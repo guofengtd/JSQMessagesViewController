@@ -550,6 +550,8 @@
 @interface JSQMessagesToolbarContentView ()
 
 @property (nonatomic, strong) JSQMessagesComposerTextView       *textView;
+@property (nonatomic, strong) UIButton                          *btnSend;
+
 @property (nonatomic, strong) JSQMessagesToolbarPTTView         *pttView;
 @property (nonatomic, strong) JSQMessagesToolbarExtraView       *extraView;
 
@@ -591,6 +593,26 @@
         
         [textView awakeFromNib];
         self.textView = textView;
+        
+        UIButton *btnSend = [UIButton buttonWithType:UIButtonTypeCustom];
+        btnSend.enabled = NO;
+        [btnSend setImage:[UIImage jsq_arrowUpImage] forState:UIControlStateNormal];
+        [btnSend setImage:[[UIImage jsq_arrowUpImage] jsq_imageMaskedWithColor:[UIColor lightGrayColor]] forState:UIControlStateDisabled];
+        
+        [btnSend addTarget:self
+                    action:@selector(touchSend:)
+          forControlEvents:UIControlEventTouchUpInside];
+        
+        [self addSubview:btnSend];
+        [btnSend mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.right.bottom.equalTo(textView).inset(4);
+            make.width.height.equalTo(@24);
+        }];
+        self.btnSend = btnSend;
+        
+        UIEdgeInsets insets = textView.textContainerInset;
+        insets.right += 30;
+        textView.textContainerInset = insets;
         
         JSQMessagesToolbarPTTView *pttView = [JSQMessagesToolbarPTTView new];
         [self addSubview:pttView];
@@ -666,7 +688,13 @@
     }
     
     self.textView.hidden = !textMode;
+    self.btnSend.hidden = self.textView.hidden;
+    
     self.pttView.hidden = textMode;
+}
+
+- (void)touchSend:(id)sender {
+    [self.delegate contentView:self touchSend:sender];
 }
 
 - (void)dealloc {
@@ -759,6 +787,9 @@
 
 - (void)jsq_didReceiveTextViewNotification:(NSNotification *)noti {
     [self.textView setNeedsDisplay];
+    [self.btnSend setNeedsDisplay];
+    
+    self.btnSend.enabled = self.textView.text.length > 0;
 }
 
 #pragma mark - UIView overrides
@@ -767,6 +798,7 @@
 {
     [super setNeedsDisplay];
     [self.textView setNeedsDisplay];
+    [self.btnSend setNeedsDisplay];
 }
 
 @end

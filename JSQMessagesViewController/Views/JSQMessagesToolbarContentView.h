@@ -88,9 +88,20 @@ typedef NS_ENUM(NSUInteger, JSQMessagesToolbarExtraItems) {
  *  These subviews consist of a left button, a text view, and a right button. One button is used as
  *  the send button, and the other as the accessory button. The text view is used for composing messages.
  */
+
+@class JSQMessagesToolbarContentView;
+
+@protocol JSQMessagesToolbarContentViewDelegate <NSObject>
+
+- (void)contentView:(JSQMessagesToolbarContentView *)contentView touchSend:(UIButton *)btnSender;
+
+@end
+
 @interface JSQMessagesToolbarContentView : UIView
 
 @property (nonatomic, assign) BOOL  textMode;
+@property (nonatomic, weak) id < JSQMessagesToolbarContentViewDelegate >    delegate;
+
 
 - (void)setTextMode:(BOOL)textMode become:(BOOL)firstResponder;
 

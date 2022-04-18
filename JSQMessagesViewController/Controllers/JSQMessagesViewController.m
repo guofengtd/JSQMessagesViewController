@@ -160,6 +160,7 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
     [self.inputToolbar removeFromSuperview];
 
     self.inputToolbar.contentView.pttView.delegate = self;
+    self.inputToolbar.contentView.delegate = self;
     self.inputToolbar.contentView.extraView.delegate = self;
     
     self.automaticallyScrollsToMostRecentMessage = YES;
