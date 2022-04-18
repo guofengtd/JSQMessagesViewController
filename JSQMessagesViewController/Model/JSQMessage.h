@@ -53,6 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (assign, nonatomic, readonly) BOOL isMediaMessage;
 @property (assign, nonatomic, readonly) BOOL isVoiceMessage;
+@property (assign, nonatomic, readonly) BOOL isVoicePlayed;
 
 /**
  *  Returns the body text of the message, or `nil` if the message is a media message.

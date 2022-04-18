@@ -168,6 +168,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (weak, nonatomic, readonly, nullable) UIView *avatarContainerView;
 @property (weak, nonatomic, readonly, nullable) UIView *statusContainerView;
+@property (weak, nonatomic, readonly, nullable) UIView *unPlayedContainerView;
+@property (weak, nonatomic, readonly, nullable) UIImageView *unPlayedImageView;
 
 /**
  *  Returns the accessory button of the cell.

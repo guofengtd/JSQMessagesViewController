@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19455" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="20037" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19454"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="20020"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -142,7 +142,6 @@
             <connections>
                 <outlet property="accessoryButton" destination="BbA-sv-fxi" id="e72-MA-jvZ"/>
                 <outlet property="avatarContainerView" destination="X89-B1-aAd" id="WSI-Zc-qIE"/>
-                <outlet property="statusContainerView" destination="X89-B1-aAe" id="WSI-Zc-qId"/>
                 <outlet property="avatarContainerViewHeightConstraint" destination="tgw-aN-JJu" id="pgV-tY-5Cm"/>
                 <outlet property="avatarContainerViewWidthConstraint" destination="Pkm-tW-k4z" id="Cpe-d3-yiq"/>
                 <outlet property="avatarImageView" destination="y9b-D9-Q7W" id="cZo-SR-S9h"/>
@@ -155,6 +154,7 @@
                 <outlet property="messageBubbleImageView" destination="2qm-c6-OZf" id="bpy-Gv-jSh"/>
                 <outlet property="messageBubbleTopLabel" destination="p52-YN-yLu" id="SLH-sA-Chu"/>
                 <outlet property="messageBubbleTopLabelHeightConstraint" destination="8TB-va-f8L" id="FNt-BS-Wxi"/>
+                <outlet property="statusContainerView" destination="X89-B1-aAe" id="WSI-Zc-qId"/>
                 <outlet property="statusImageView" destination="y9b-D9-Q7q" id="cZo-SR-S9j"/>
                 <outlet property="textView" destination="vLY-aM-0Dr" id="YEp-mW-xIY"/>
                 <outlet property="textViewAvatarHorizontalSpaceConstraint" destination="aVg-yy-8K7" id="CIe-Bi-eng"/>

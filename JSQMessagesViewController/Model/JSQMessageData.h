@@ -77,6 +77,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)isVoiceMessage;
 - (BOOL)isPhotoMessage;
 - (BOOL)isFileMessage;
+- (BOOL)isVoicePlayed;
 
 /**
  *  @return An integer that can be used as a table address in a hash table structure.
