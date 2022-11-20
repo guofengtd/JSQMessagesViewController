@@ -153,6 +153,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  Returns the avatar image view of the cell that is responsible for displaying avatar images.
  */
+@property (weak, nonatomic, readonly, nullable) UIImageView *selectImageView;
 @property (weak, nonatomic, readonly, nullable) UIImageView *avatarImageView;
 @property (weak, nonatomic, readonly, nullable) UIImageView *statusImageView;
 
@@ -166,6 +167,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  its frame, nor should you remove this view from the cell or remove any of its subviews.
  *  Doing so could result in unexpected behavior.
  */
+@property (weak, nonatomic, readonly, nullable) UIView *selectContainerView;
 @property (weak, nonatomic, readonly, nullable) UIView *avatarContainerView;
 @property (weak, nonatomic, readonly, nullable) UIView *statusContainerView;
 @property (weak, nonatomic, readonly, nullable) UIView *unPlayedContainerView;

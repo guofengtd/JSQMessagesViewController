@@ -116,6 +116,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (UIImage *)jsq_arrowUpImage;
 
++ (UIImage *)jsq_checkedImage;
+
++ (UIImage *)jsq_uncheckedImage;
+
 @end
 
 NS_ASSUME_NONNULL_END

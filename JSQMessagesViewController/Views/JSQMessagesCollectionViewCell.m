@@ -39,6 +39,8 @@ static NSMutableSet *jsqMessagesCollectionViewCellActions = nil;
 @property (weak, nonatomic) IBOutlet UIImageView *messageBubbleImageView;
 @property (weak, nonatomic) IBOutlet JSQMessagesCellTextView *textView;
 
+@property (weak, nonatomic) IBOutlet UIImageView *selectImageView;
+@property (weak, nonatomic) IBOutlet UIView *selectContainerView;
 @property (weak, nonatomic) IBOutlet UIImageView *avatarImageView;
 @property (weak, nonatomic) IBOutlet UIView *avatarContainerView;
 @property (weak, nonatomic) IBOutlet UIView *statusContainerView;
@@ -58,6 +60,8 @@ static NSMutableSet *jsqMessagesCollectionViewCellActions = nil;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *messageBubbleTopLabelHeightConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *cellBottomLabelHeightConstraint;
 
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *selectContainerViewWidthConstraint;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *selectContainerViewHeightConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *avatarContainerViewWidthConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *avatarContainerViewHeightConstraint;
 
@@ -173,6 +177,7 @@ static NSMutableSet *jsqMessagesCollectionViewCellActions = nil;
     _messageBubbleImageView = nil;
     _mediaView = nil;
 
+    _selectImageView = nil;
     _avatarImageView = nil;
 
     [_tapGestureRecognizer removeTarget:nil action:NULL];
@@ -195,6 +200,7 @@ static NSMutableSet *jsqMessagesCollectionViewCellActions = nil;
     self.textView.text = nil;
     self.textView.attributedText = nil;
 
+    self.selectImageView.image = nil;
     self.avatarImageView.image = nil;
     self.avatarImageView.highlightedImage = nil;
     
@@ -316,6 +322,8 @@ static NSMutableSet *jsqMessagesCollectionViewCellActions = nil;
     self.cellBottomLabel.backgroundColor = backgroundColor;
 
     self.messageBubbleImageView.backgroundColor = backgroundColor;
+    self.selectImageView.backgroundColor = backgroundColor;
+    self.selectContainerView.backgroundColor = backgroundColor;
     self.avatarImageView.backgroundColor = backgroundColor;
 
     self.messageBubbleContainerView.backgroundColor = backgroundColor;

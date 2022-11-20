@@ -34,6 +34,7 @@
 #import "NSBundle+JSQMessages.h"
 
 #import <objc/runtime.h>
+#import "UIImage+JSQMessages.h"
 
 
 // Fixes rdar://26295020
@@ -523,6 +524,8 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
             }
         }
     }
+    
+    cell.selectImageView.image = [UIImage jsq_checkedImage];
 
     cell.cellTopLabel.attributedText = [collectionView.dataSource collectionView:collectionView attributedTextForCellTopLabelAtIndexPath:indexPath];
     cell.messageBubbleTopLabel.attributedText = [collectionView.dataSource collectionView:collectionView attributedTextForMessageBubbleTopLabelAtIndexPath:indexPath];

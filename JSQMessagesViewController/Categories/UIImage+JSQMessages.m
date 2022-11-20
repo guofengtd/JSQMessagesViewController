@@ -168,4 +168,12 @@
     return [UIImage jsq_bubbleImageFromBundleWithName:@"arrow_up"];
 }
 
++ (UIImage *)jsq_checkedImage {
+    return [[UIImage jsq_bubbleImageFromBundleWithName:@"check"] jsq_imageMaskedWithColor:[UIColor lightGrayColor]];
+}
+
++ (UIImage *)jsq_uncheckedImage {
+    return [[UIImage jsq_bubbleImageFromBundleWithName:@"check"] jsq_imageMaskedWithColor:[UIColor blueColor]];
+}
+
 @end

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="20037" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="21225" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="20020"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21207"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -38,7 +38,7 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="btS-p8-B7Z" userLabel="Bubble container">
-                        <rect key="frame" x="36" y="40" width="244" height="94"/>
+                        <rect key="frame" x="72" y="40" width="244" height="94"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="OCS-Fu-acq" userLabel="Bubble Image View">
                                 <rect key="frame" x="0.0" y="0.0" width="244" height="94"/>
@@ -63,8 +63,25 @@
                             <constraint firstItem="OCS-Fu-acq" firstAttribute="top" secondItem="btS-p8-B7Z" secondAttribute="top" id="zTa-8g-VY4"/>
                         </constraints>
                     </view>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Da1-09-wR3" userLabel="Select container">
+                        <rect key="frame" x="0.0" y="60" width="26" height="26"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="w23-sL-0Rg" userLabel="Select Image View">
+                                <rect key="frame" x="0.0" y="0.0" width="26" height="26"/>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" red="0.3333333432674408" green="0.3333333432674408" blue="0.3333333432674408" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="w23-sL-0Rg" firstAttribute="leading" secondItem="Da1-09-wR3" secondAttribute="leading" id="6zm-sH-cOU"/>
+                            <constraint firstAttribute="trailing" secondItem="w23-sL-0Rg" secondAttribute="trailing" id="JgK-7W-L11"/>
+                            <constraint firstAttribute="bottom" secondItem="w23-sL-0Rg" secondAttribute="bottom" id="U39-Ze-JZ7"/>
+                            <constraint firstAttribute="width" constant="26" id="YwX-fW-Me7"/>
+                            <constraint firstItem="w23-sL-0Rg" firstAttribute="top" secondItem="Da1-09-wR3" secondAttribute="top" id="hxb-KR-hNL"/>
+                            <constraint firstAttribute="height" constant="26" id="tZk-AK-JFb"/>
+                        </constraints>
+                    </view>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Da1-09-wR4" userLabel="Avatar container">
-                        <rect key="frame" x="0.0" y="100" width="34" height="34"/>
+                        <rect key="frame" x="36" y="100" width="34" height="34"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="w23-sL-0Rh" userLabel="Avatar Image View">
                                 <rect key="frame" x="0.0" y="0.0" width="34" height="34"/>
@@ -91,7 +108,7 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Md1-I7-2AZ" userLabel="Accessory button">
-                        <rect key="frame" x="304" y="75" width="24" height="24"/>
+                        <rect key="frame" x="340" y="75" width="24" height="24"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="24" placeholder="YES" id="8xc-lG-N5Q"/>
                             <constraint firstAttribute="height" constant="24" placeholder="YES" id="VpB-3c-dKf"/>
@@ -101,7 +118,7 @@
                         </connections>
                     </button>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Da1-09-wR5" userLabel="UnPlayed container">
-                        <rect key="frame" x="288" y="83" width="8" height="8"/>
+                        <rect key="frame" x="324" y="83" width="8" height="8"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="w23-sL-0Ri" userLabel="Unplayed Image View">
                                 <rect key="frame" x="0.0" y="0.0" width="8" height="8"/>
@@ -129,6 +146,7 @@
                 <constraint firstItem="UPz-5x-c1T" firstAttribute="leading" secondItem="4lh-CK-yVn" secondAttribute="leading" id="54r-MX-MGW"/>
                 <constraint firstAttribute="trailing" secondItem="UPz-5x-c1T" secondAttribute="trailing" id="G3U-h0-DWS"/>
                 <constraint firstAttribute="trailing" secondItem="afj-rd-iNv" secondAttribute="trailing" id="Ka4-Dy-jCS"/>
+                <constraint firstItem="Da1-09-wR3" firstAttribute="leading" secondItem="UPz-5x-c1T" secondAttribute="leading" id="LH0-X7-ddk"/>
                 <constraint firstItem="Md1-I7-2AZ" firstAttribute="centerY" secondItem="btS-p8-B7Z" secondAttribute="centerY" id="LQ0-vF-qkk"/>
                 <constraint firstItem="Md1-I7-2AZ" firstAttribute="leading" secondItem="Da1-09-wR5" secondAttribute="trailing" constant="8" id="MYP-wd-RXn"/>
                 <constraint firstItem="afj-rd-iNv" firstAttribute="leading" secondItem="4lh-CK-yVn" secondAttribute="leading" id="OnD-mZ-QtR"/>
@@ -137,10 +155,11 @@
                 <constraint firstAttribute="trailing" secondItem="Ufa-bF-l1Y" secondAttribute="trailing" id="cWQ-1Q-xOA"/>
                 <constraint firstItem="Da1-09-wR5" firstAttribute="centerY" secondItem="Md1-I7-2AZ" secondAttribute="centerY" id="cXi-f9-cLY"/>
                 <constraint firstItem="UPz-5x-c1T" firstAttribute="top" secondItem="Da1-09-wR4" secondAttribute="bottom" id="dDB-B0-c6J"/>
+                <constraint firstItem="Da1-09-wR3" firstAttribute="centerY" secondItem="4lh-CK-yVn" secondAttribute="centerY" id="fnQ-42-9Mj"/>
                 <constraint firstItem="Ufa-bF-l1Y" firstAttribute="top" secondItem="afj-rd-iNv" secondAttribute="bottom" id="i9Y-sV-v6b"/>
                 <constraint firstItem="btS-p8-B7Z" firstAttribute="leading" secondItem="Da1-09-wR4" secondAttribute="trailing" constant="2" id="j0I-pm-eex"/>
                 <constraint firstItem="btS-p8-B7Z" firstAttribute="top" secondItem="Ufa-bF-l1Y" secondAttribute="bottom" id="jAu-Dn-7rN"/>
-                <constraint firstItem="Da1-09-wR4" firstAttribute="leading" secondItem="4lh-CK-yVn" secondAttribute="leading" id="jiu-B4-TSD"/>
+                <constraint firstItem="Da1-09-wR4" firstAttribute="leading" secondItem="Da1-09-wR3" secondAttribute="trailing" constant="2" id="jiu-B4-TSD"/>
                 <constraint firstAttribute="bottom" secondItem="UPz-5x-c1T" secondAttribute="bottom" id="nsK-Gh-M3Z"/>
                 <constraint firstItem="Da1-09-wR5" firstAttribute="leading" secondItem="btS-p8-B7Z" secondAttribute="trailing" constant="8" id="oRg-ap-FtF"/>
                 <constraint firstItem="UPz-5x-c1T" firstAttribute="top" secondItem="btS-p8-B7Z" secondAttribute="bottom" id="s8G-Je-7GA"/>
@@ -148,12 +167,14 @@
             <size key="customSize" width="353" height="245"/>
             <connections>
                 <outlet property="accessoryButton" destination="Md1-I7-2AZ" id="oP2-b9-yws"/>
+                <outlet property="selectContainerView" destination="Da1-09-wR3" id="tpM-P4-qUx"/>
+                <outlet property="selectImageView" destination="w23-sL-0Rg" id="Yf4-UR-VRx"/>
+                <outlet property="selectContainerViewHeightConstraint" destination="tZk-AK-JFb" id="tPu-mC-ITx"/>
+                <outlet property="selectContainerViewWidthConstraint" destination="YwX-fW-Me7" id="5PN-NL-hEx"/>
                 <outlet property="avatarContainerView" destination="Da1-09-wR4" id="tpM-P4-qUR"/>
                 <outlet property="avatarContainerViewHeightConstraint" destination="tZk-AK-JFa" id="tPu-mC-ITh"/>
                 <outlet property="avatarContainerViewWidthConstraint" destination="YwX-fW-Me6" id="5PN-NL-hEP"/>
                 <outlet property="avatarImageView" destination="w23-sL-0Rh" id="Yf4-UR-VRC"/>
-                <outlet property="unPlayedContainerView" destination="Da1-09-wR5" id="tpM-P4-qUA"/>
-                <outlet property="unPlayedImageView" destination="w23-sL-0Ri" id="Yf4-UR-VRD"/>
                 <outlet property="cellBottomLabel" destination="UPz-5x-c1T" id="MKm-hp-T6v"/>
                 <outlet property="cellBottomLabelHeightConstraint" destination="xPR-Ph-Ze9" id="nvV-Tk-AIs"/>
                 <outlet property="cellTopLabel" destination="afj-rd-iNv" id="bTd-4q-U7e"/>
@@ -163,11 +184,15 @@
                 <outlet property="messageBubbleImageView" destination="OCS-Fu-acq" id="OuN-5t-30g"/>
                 <outlet property="messageBubbleTopLabel" destination="Ufa-bF-l1Y" id="VtH-te-blR"/>
                 <outlet property="messageBubbleTopLabelHeightConstraint" destination="fal-sy-hrK" id="kgv-NO-Gud"/>
+                <outlet property="selectContainerViewHeightConstraint" destination="tZk-AK-JFb" id="tPu-mC-ITi"/>
+                <outlet property="selectContainerViewWidthConstraint" destination="YwX-fW-Me7" id="5PN-NL-hEG"/>
                 <outlet property="textView" destination="KYU-B8-cUW" id="1Yv-ln-EUZ"/>
                 <outlet property="textViewAvatarHorizontalSpaceConstraint" destination="Tg9-9l-vr8" id="HWn-aO-NbR"/>
                 <outlet property="textViewBottomVerticalSpaceConstraint" destination="B2v-Gq-Y1L" id="oKV-Ti-Oci"/>
                 <outlet property="textViewMarginHorizontalSpaceConstraint" destination="4qS-03-PFO" id="1Qe-Ee-fUO"/>
                 <outlet property="textViewTopVerticalSpaceConstraint" destination="aEL-yH-N1p" id="WPl-0b-tf1"/>
+                <outlet property="unPlayedContainerView" destination="Da1-09-wR5" id="tpM-P4-qUA"/>
+                <outlet property="unPlayedImageView" destination="w23-sL-0Ri" id="Yf4-UR-VRD"/>
             </connections>
             <point key="canvasLocation" x="395.6521739130435" y="135.26785714285714"/>
         </collectionViewCell>
