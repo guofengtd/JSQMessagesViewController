@@ -148,10 +148,10 @@ static NSMutableSet *jsqMessagesCollectionViewCellActions = nil;
     [self addGestureRecognizer:tap];
     self.tapGestureRecognizer = tap;
     
-    UILongPressGestureRecognizer *press = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(jsq_handleLongPressGesture:)];
-    press.delegate = self;
-    [self addGestureRecognizer:press];
-    self.longPressGestureRecognizer = press;
+//    UILongPressGestureRecognizer *press = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(jsq_handleLongPressGesture:)];
+//    press.delegate = self;
+//    [self addGestureRecognizer:press];
+//    self.longPressGestureRecognizer = press;
 }
 
 - (void)configureAccessoryButton
