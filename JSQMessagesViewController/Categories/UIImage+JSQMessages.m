@@ -169,11 +169,11 @@
 }
 
 + (UIImage *)jsq_checkedImage {
-    return [[UIImage jsq_bubbleImageFromBundleWithName:@"check"] jsq_imageMaskedWithColor:[UIColor lightGrayColor]];
+    return [UIImage jsq_bubbleImageFromBundleWithName:@"check"];
 }
 
 + (UIImage *)jsq_uncheckedImage {
-    return [[UIImage jsq_bubbleImageFromBundleWithName:@"check"] jsq_imageMaskedWithColor:[UIColor blueColor]];
+    return [UIImage jsq_bubbleImageFromBundleWithName:@"uncheck"];
 }
 
 @end

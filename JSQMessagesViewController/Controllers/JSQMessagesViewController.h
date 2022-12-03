@@ -45,6 +45,9 @@ NS_ASSUME_NONNULL_BEGIN
  *  Returns the input toolbar view object managed by this view controller.
  *  This view controller is the toolbar's delegate.
  */
+@property (nonatomic, assign) BOOL              multiSelect;
+@property (nonatomic, strong) NSMutableArray    *selectedItems;
+
 @property (strong, nonatomic, readonly) JSQMessagesInputToolbar *inputToolbar;
 @property (nonatomic, assign) BOOL      showEmojiPad;
 @property (nonatomic, assign) BOOL      showExtraPad;

@@ -23,9 +23,18 @@
 
 #import <MobileCoreServices/UTCoreTypes.h>
 
+#ifdef ANIMATED_GIF_SUPPORT
+#import <PINRemoteImage/PINRemoteImage.h>
+#import <PINRemoteImage/PINAnimatedImageView.h>
+#endif //ANIMATED_GIF_SUPPORT
+
 @interface JSQPhotoMediaItem ()
 
-@property (strong, nonatomic) UIImageView *cachedImageView;
+#ifdef ANIMATED_GIF_SUPPORT
+@property (nonatomic) PINAnimatedImageView *cachedImageView;
+#else
+@property (nonatomic) UIImageView *cachedImageView;
+#endif
 
 @end
 
@@ -34,11 +43,13 @@
 
 #pragma mark - Initialization
 
-- (instancetype)initWithImage:(UIImage *)image
+- (instancetype)initWithImage:(UIImage *)image data:(NSData *)imageData
 {
     self = [super init];
     if (self) {
         _image = [image copy];
+        _imageData = [imageData copy];
+        
         _cachedImageView = nil;
     }
     return self;
@@ -46,7 +57,8 @@
 
 - (instancetype)initWithData:(NSData *)data maskAsOutgoing:(BOOL)maskAsOutgoing {
     if (self = [super initWithMaskAsOutgoing:maskAsOutgoing]) {
-        self.image = [UIImage imageWithData:data];
+//        self.image = [UIImage imageWithData:data];
+        self.imageData = data;
     }
     
     return self;
@@ -66,6 +78,11 @@
     _cachedImageView = nil;
 }
 
+- (void)setImageData:(NSData *)imageData {
+    _imageData = [imageData copy];
+    _cachedImageView = nil;
+}
+
 - (void)setAppliesMediaViewMaskAsOutgoing:(BOOL)appliesMediaViewMaskAsOutgoing
 {
     [super setAppliesMediaViewMaskAsOutgoing:appliesMediaViewMaskAsOutgoing];
@@ -76,13 +93,26 @@
 
 - (UIView *)mediaView
 {
-    if (self.image == nil) {
+    if (self.image == nil && self.imageData == nil) {
         return nil;
     }
     
     if (self.cachedImageView == nil) {
         CGSize size = [self mediaViewDisplaySize];
+        
+#ifdef ANIMATED_GIF_SUPPORT
+        PINAnimatedImageView *imageView;
+        PINCachedAnimatedImage *animatedImage = [[PINCachedAnimatedImage alloc] initWithAnimatedImageData:self.imageData];
+        if (animatedImage) {
+            imageView = [[PINAnimatedImageView alloc] initWithAnimatedImage:animatedImage];
+        }
+        else {
+            imageView = [[PINAnimatedImageView alloc] initWithImage:[UIImage imageWithData:self.imageData]];
+        }
+#else
         UIImageView *imageView = [[UIImageView alloc] initWithImage:self.image];
+#endif
+
         imageView.frame = CGRectMake(0.0f, 0.0f, size.width, size.height);
         imageView.contentMode = UIViewContentModeScaleAspectFill;
         imageView.clipsToBounds = YES;
@@ -112,7 +142,7 @@
 
 - (NSUInteger)hash
 {
-    return super.hash ^ self.image.hash;
+    return super.hash ^ self.image.hash ^ self.imageData.hash;
 }
 
 - (NSString *)description
@@ -142,8 +172,9 @@
 
 - (instancetype)copyWithZone:(NSZone *)zone
 {
-    JSQPhotoMediaItem *copy = [[JSQPhotoMediaItem allocWithZone:zone] initWithImage:self.image];
+    JSQPhotoMediaItem *copy = [[JSQPhotoMediaItem allocWithZone:zone] initWithImage:self.image data:self.imageData];
     copy.appliesMediaViewMaskAsOutgoing = self.appliesMediaViewMaskAsOutgoing;
+    
     return copy;
 }
 

@@ -180,6 +180,8 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
     self.showLoadEarlierMessagesHeader = NO;
 
     self.additionalContentInset = UIEdgeInsetsZero;
+    
+    self.multiSelect = FALSE;
 
     [self jsq_updateCollectionViewInsets];
 }
@@ -196,6 +198,15 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
 }
 
 #pragma mark - Setters
+
+- (void)setMultiSelect:(BOOL)multiSelect {
+    _multiSelect = multiSelect;
+    if (multiSelect) {
+        self.selectedItems = [NSMutableArray new];
+    }
+    
+    [self.collectionView reloadData];
+}
 
 - (void)setShowTypingIndicator:(BOOL)showTypingIndicator
 {
@@ -525,7 +536,9 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
         }
     }
     
-    cell.selectImageView.image = [UIImage jsq_checkedImage];
+    if (self.multiSelect) {
+        cell.selectImageView.image = [self.selectedItems containsObject:indexPath]?[UIImage jsq_checkedImage]:[UIImage jsq_uncheckedImage];
+    }
 
     cell.cellTopLabel.attributedText = [collectionView.dataSource collectionView:collectionView attributedTextForCellTopLabelAtIndexPath:indexPath];
     cell.messageBubbleTopLabel.attributedText = [collectionView.dataSource collectionView:collectionView attributedTextForMessageBubbleTopLabelAtIndexPath:indexPath];
@@ -546,6 +559,8 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
     cell.layer.rasterizationScale = [UIScreen mainScreen].scale;
     cell.layer.shouldRasterize = YES;
     [self collectionView:collectionView accessibilityForCell:cell indexPath:indexPath message:messageItem];
+    
+    cell.showSelect = self.multiSelect;
 
     return cell;
 }
@@ -692,6 +707,19 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
                    layout:(JSQMessagesCollectionViewFlowLayout *)collectionViewLayout heightForCellBottomLabelAtIndexPath:(NSIndexPath *)indexPath
 {
     return 0.0f;
+}
+
+- (void)collectionView:(JSQMessagesCollectionView *)collectionView
+      didTapSelectView:(UIImageView *)avatarImageView
+           atIndexPath:(NSIndexPath *)indexPath {
+    if ([self.selectedItems containsObject:indexPath]) {
+        [self.selectedItems removeObject:indexPath];
+    }
+    else {
+        [self.selectedItems addObject:indexPath];
+    }
+    
+    [collectionView reloadData];
 }
 
 - (void)collectionView:(JSQMessagesCollectionView *)collectionView

@@ -32,6 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  The image for the photo media item. The default value is `nil`.
  */
 @property (copy, nonatomic, nullable) UIImage *image;
+@property (copy, nonatomic, nullable) NSData  *imageData;
 
 /**
  *  Initializes and returns a photo media item object having the given image.
@@ -44,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  you may initialize a `JSQPhotoMediaItem` object with a `nil` image. 
  *  Once the image has been retrieved, you can then set the image property.
  */
-- (instancetype)initWithImage:(nullable UIImage *)image;
+- (instancetype)initWithImage:(nullable UIImage *)image data:(nullable NSData *)imageData;
 
 - (instancetype)initWithData:(NSData *)data maskAsOutgoing:(BOOL)maskAsOutgoing;
 

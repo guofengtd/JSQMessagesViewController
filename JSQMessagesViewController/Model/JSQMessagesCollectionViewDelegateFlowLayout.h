@@ -84,6 +84,9 @@ NS_ASSUME_NONNULL_BEGIN
  *  @param avatarImageView The avatar image view that was tapped.
  *  @param indexPath       The index path of the item for which the avatar was tapped.
  */
+
+- (void)collectionView:(JSQMessagesCollectionView *)collectionView didTapSelectView:(UIImageView *)avatarImageView atIndexPath:(NSIndexPath *)indexPath;
+
 - (void)collectionView:(JSQMessagesCollectionView *)collectionView didTapAvatarImageView:(UIImageView *)avatarImageView atIndexPath:(NSIndexPath *)indexPath;
 
 - (void)collectionView:(JSQMessagesCollectionView *)collectionView didTapStatusImageView:(UIImageView *)statusImageView atIndexPath:(NSIndexPath *)indexPath;

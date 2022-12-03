@@ -33,6 +33,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @required
 
+- (void)messagesCollectionViewCellDidTapSelect:(JSQMessagesCollectionViewCell *)cell;
+
 /**
  *  Tells the delegate that the avatarImageView of the cell has been tapped.
  *
@@ -104,6 +106,8 @@ NS_ASSUME_NONNULL_BEGIN
  *  The object that acts as the delegate for the cell.
  */
 @property (weak, nonatomic, nullable) id<JSQMessagesCollectionViewCellDelegate> delegate;
+
+@property (nonatomic, assign) BOOL  showSelect;
 
 /**
  *  Returns the label that is pinned to the top of the cell.

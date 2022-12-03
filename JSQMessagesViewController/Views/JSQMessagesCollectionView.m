@@ -137,6 +137,17 @@ forSupplementaryViewOfKind:UICollectionElementKindSectionHeader
 
 #pragma mark - Messages collection view cell delegate
 
+- (void)messagesCollectionViewCellDidTapSelect:(JSQMessagesCollectionViewCell *)cell {
+    NSIndexPath *indexPath = [self indexPathForCell:cell];
+    if (indexPath == nil) {
+        return;
+    }
+
+    [self.delegate collectionView:self
+                 didTapSelectView:cell.selectImageView
+                      atIndexPath:indexPath];
+}
+
 - (void)messagesCollectionViewCellDidTapAvatar:(JSQMessagesCollectionViewCell *)cell
 {
     NSIndexPath *indexPath = [self indexPathForCell:cell];
